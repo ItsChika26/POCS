@@ -4,18 +4,49 @@ using Microsoft.Data.SqlClient;
 
 namespace PPProject
 {
-    internal class Database
+    internal static class Database
     {
-        private SqlConnection? Connection;
+        private static SqlConnection? Connection;
         //public SqlConnection connection;
 
-        public void Connect(string connectionString)
+        public static void Connect()
         { 
             if(Connection is not null) return;
 
-            connectionString = "";
+            var connectionString = "Server=tcp:ppprojectserver.database.windows.net,1433;Initial Catalog=PPProject;Persist Security Info=False;User ID=ppprojectadmin;Password=S473server;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
             Connection = new SqlConnection(connectionString);
+        }
+
+        public static bool RegisterUser(string username, string password)
+        {
+            string queryString = $"SELECT username FROM dbo.Users where username = {username};";
+
+            SqlCommand command = new SqlCommand(queryString, Connection);
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                if (!reader.Read()) return false;
+            }
+
+            queryString = $"INSERT INTO dbo.Users (username, password, level) VALUES ({username}, {password}, {0});";
+            command = new SqlCommand(queryString, Connection);
+            command.ExecuteNonQuery();
+            return true;
+
+        }
+            public static User? LoginUser()
+        {
+            return new User("","");
+        }
+
+        public static void UpdateUserLevel(User user)
+        {
+
+        }
+
+        public static void UpdateUserGames(User user)
+        {
+
         }
 
 
