@@ -1,0 +1,176 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dineug/erd-editor/main/json-schema/schema.json",
+  "version": "3.0.0",
+  "settings": {
+    "width": 2000,
+    "height": 2000,
+    "scrollTop": -500,
+    "scrollLeft": 0,
+    "zoomLevel": 1,
+    "show": 431,
+    "database": 4,
+    "databaseName": "",
+    "canvasType": "@dineug/erd-editor/builtin-schema-sql",
+    "language": 1,
+    "tableNameCase": 4,
+    "columnNameCase": 2,
+    "bracketType": 1,
+    "relationshipDataTypeSync": true,
+    "relationshipOptimization": false,
+    "columnOrder": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "maxWidthComment": -1,
+    "ignoreSaveSettings": 0
+  },
+  "doc": {
+    "tableIds": [
+      "_srgIvhgzocomp7fXti47"
+    ],
+    "relationshipIds": [],
+    "indexIds": [],
+    "memoIds": []
+  },
+  "collections": {
+    "tableEntities": {
+      "_srgIvhgzocomp7fXti47": {
+        "id": "_srgIvhgzocomp7fXti47",
+        "name": "Users",
+        "comment": "",
+        "columnIds": [
+          "EO9hTT9UvOP5f0pfqx4dD",
+          "RBBGWe4V_lOOThA99agEQ",
+          "oY9K8qPLKKIhTQAxAfYl8"
+        ],
+        "seqColumnIds": [
+          "EO9hTT9UvOP5f0pfqx4dD",
+          "RBBGWe4V_lOOThA99agEQ",
+          "oY9K8qPLKKIhTQAxAfYl8"
+        ],
+        "ui": {
+          "x": 200,
+          "y": 588,
+          "zIndex": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1714174578995,
+          "createAt": 1714174527172
+        }
+      }
+    },
+    "tableColumnEntities": {
+      "EO9hTT9UvOP5f0pfqx4dD": {
+        "id": "EO9hTT9UvOP5f0pfqx4dD",
+        "tableId": "_srgIvhgzocomp7fXti47",
+        "name": "username",
+        "comment": "",
+        "dataType": "VARCHAR",
+        "default": "",
+        "options": 10,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1714174597746,
+          "createAt": 1714174537388
+        }
+      },
+      "RBBGWe4V_lOOThA99agEQ": {
+        "id": "RBBGWe4V_lOOThA99agEQ",
+        "tableId": "_srgIvhgzocomp7fXti47",
+        "name": "password",
+        "comment": "",
+        "dataType": "VARCHAR",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1714174573723,
+          "createAt": 1714174549404
+        }
+      },
+      "oY9K8qPLKKIhTQAxAfYl8": {
+        "id": "oY9K8qPLKKIhTQAxAfYl8",
+        "tableId": "_srgIvhgzocomp7fXti47",
+        "name": "level",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1714174605676,
+          "createAt": 1714174553332
+        }
+      }
+    },
+    "relationshipEntities": {},
+    "indexEntities": {},
+    "indexColumnEntities": {},
+    "memoEntities": {}
+  },
+  "lww": {
+    "_srgIvhgzocomp7fXti47": [
+      "tableEntities",
+      1714174527170,
+      -1,
+      {
+        "name": 1714174533596
+      }
+    ],
+    "EO9hTT9UvOP5f0pfqx4dD": [
+      "tableColumnEntities",
+      1714174537387,
+      -1,
+      {
+        "name": 1714174547605,
+        "dataType": 1714174568505,
+        "options(primaryKey)": 1714174597745
+      }
+    ],
+    "RBBGWe4V_lOOThA99agEQ": [
+      "tableColumnEntities",
+      1714174549403,
+      -1,
+      {
+        "name": 1714174552299,
+        "dataType": 1714174573722
+      }
+    ],
+    "oY9K8qPLKKIhTQAxAfYl8": [
+      "tableColumnEntities",
+      1714174553331,
+      -1,
+      {
+        "name": 1714174605675,
+        "dataType": 1714174590515,
+        "options(primaryKey)": 1714174595451
+      }
+    ]
+  }
+}
