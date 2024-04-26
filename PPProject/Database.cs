@@ -8,19 +8,17 @@ namespace PPProject
     {
         private SqlConnection? Connection;
         //public SqlConnection connection;
-        public string connectionString;
 
-
-        public SqlConnection? Connect()
+        public void Connect(string connectionString)
         { 
-            if(Connection is not null) return Connection;
+            if(Connection is not null) return;
 
             connectionString = "";
 
-            var connection = new SqlConnection(connectionString);
-
-
+            Connection = new SqlConnection(connectionString);
         }
+
+
 
 
             static void Main(string[] args)
