@@ -22,5 +22,15 @@ namespace PPProject
         {
             Score = score;
         }
+
+        public void UpdateName(string name)
+        {
+            Name = name;
+        }
+
+        public void UpdateGameID(int gameID)
+        {
+            GameID = gameID;
+        }
     }
 }

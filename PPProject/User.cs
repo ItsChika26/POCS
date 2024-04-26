@@ -26,6 +26,30 @@ namespace PPProject
         {
             Level++;
         }
+
+        public void UpdatePassword(string password)
+        {
+            Password = password;
+        }
+
+        public void UpdateUsername(string username)
+        {
+            Username = username;
+        }
+
+        public void UpdateLevel(int level)
+        {
+            Level = level;
+        }
+        
+        public void UpdateUserID(int userID)
+        {
+            UserID = userID;
+        }
+        public void AddGame(Game game)
+        {
+            games.Add(game);
+        }
    
     }
 }
