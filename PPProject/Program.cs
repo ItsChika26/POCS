@@ -12,7 +12,7 @@ namespace LauncherApp
             var client = Client.Instance;
             await client.Connect("20.93.117.58",3389);
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            Application.Run(new LoginForm());
         }
     }
 }

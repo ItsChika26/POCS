@@ -2,10 +2,10 @@ using Newtonsoft.Json;
 
 namespace LauncherApp
 {
-    public partial class Form1 : Form
+    public partial class LoginForm : Form
     {
         Client client = Client.Instance;
-        public Form1()
+        public LoginForm()
         {
             InitializeComponent();
         }
@@ -32,7 +32,10 @@ namespace LauncherApp
             if (response != null) 
             {
                 var user = JsonConvert.DeserializeObject<User>(response);
-                MessageBox.Show($"User {user.Username} with level {user.Level} logged in successfully");
+                var form = new GameHub(user);
+                form.Show();
+                this.Close();
+                //MessageBox.Show($"User {user.Username} with level {user.Level} logged in successfully");
             }
             else
             {
