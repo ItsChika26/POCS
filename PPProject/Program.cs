@@ -10,7 +10,7 @@ namespace LauncherApp
         static async Task Main()
         {
             var client = Client.Instance;
-            await client.Connect("20.93.117.58",3389);
+            await client.Connect("20.215.40.53",8080);
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1());
         }

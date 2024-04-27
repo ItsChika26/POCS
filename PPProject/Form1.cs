@@ -1,3 +1,4 @@
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace LauncherApp
@@ -25,11 +26,11 @@ namespace LauncherApp
             string username = textBox_user.Text;
             string password = textBox_pass.Text;
 
-            Request loginRequest = new() { Username = username, Password = password };
+            Request loginRequest = new() { Username = username, Password = password, Action = "Login"};
             string message = JsonConvert.SerializeObject(loginRequest);
 
             var response = await client.SendMessage(message);
-            if (response != null) 
+            if (!response.IsNullOrEmpty()) 
             {
                 var user = JsonConvert.DeserializeObject<User>(response);
                 MessageBox.Show($"User {user.Username} with level {user.Level} logged in successfully");
@@ -68,7 +69,7 @@ namespace LauncherApp
                 return;
             }
 
-            Request registerRequest = new() { Username = username, Password = password };
+            Request registerRequest = new() { Username = username, Password = password,Action = "Register"};
             var message = JsonConvert.SerializeObject(registerRequest);
 
             var response = await client.SendMessage(message);

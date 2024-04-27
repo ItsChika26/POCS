@@ -49,11 +49,6 @@ namespace BaseServer
             Listener.Stop();
         }
 
-        private string HandleLogin(string username, string password)
-        {
-            // Handle login action here and return a response message
-            return "Login successful"; // Placeholder
-        }
 
         public void Stop()
         {
