@@ -1,4 +1,4 @@
-﻿namespace PPProject
+﻿namespace LauncherApp
 {
     partial class Form1
     {

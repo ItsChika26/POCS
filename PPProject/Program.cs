@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace PPProject
+namespace LauncherApp
 {
     internal static class Program
     {

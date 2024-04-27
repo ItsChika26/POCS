@@ -2,7 +2,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace PPProject
+namespace LauncherApp
 {
     internal static class Database
     {
