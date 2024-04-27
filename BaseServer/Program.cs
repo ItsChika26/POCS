@@ -5,6 +5,7 @@
         static void Main()
         {
             Server server = new Server();
+            Database.Connect();
             server.Start();
         }
     }

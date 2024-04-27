@@ -25,7 +25,7 @@ namespace BaseServer
 
         private void HandleMessages()
         {
-            Listener = new TcpListener(IPAddress.Any, 8000);
+            Listener = new TcpListener(8080);
             Listener.Start();
             Console.WriteLine("Server started!");
             while (running)
