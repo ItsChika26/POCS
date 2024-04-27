@@ -1,6 +1,6 @@
 ﻿namespace LauncherApp
 {
-    partial class Form1
+    partial class LoginForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             label_username = new Label();
             label_password = new Label();
             panel1 = new Panel();
@@ -97,12 +97,12 @@
             // 
             label_title.AutoSize = true;
             label_title.Font = new Font("Arial", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 162);
-            label_title.ForeColor = SystemColors.ControlLightLight;
-            label_title.Location = new Point(17, 32);
+            label_title.ForeColor = Color.FromArgb(255, 128, 0);
+            label_title.Location = new Point(94, 39);
             label_title.Name = "label_title";
-            label_title.Size = new Size(353, 51);
+            label_title.Size = new Size(178, 51);
             label_title.TabIndex = 6;
-            label_title.Text = "Game Launcher";
+            label_title.Text = "POCHS";
             // 
             // button_register
             // 
@@ -153,7 +153,7 @@
             errorProvider_user.ContainerControl = this;
             errorProvider_user.Icon = (Icon)resources.GetObject("errorProvider_user.Icon");
             // 
-            // Form1
+            // LoginForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -162,7 +162,7 @@
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
-            Name = "Form1";
+            Name = "LoginForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Sign In";
             panel1.ResumeLayout(false);
