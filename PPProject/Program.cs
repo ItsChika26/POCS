@@ -14,10 +14,10 @@ namespace LauncherApp
             //ApplicationConfiguration.Initialize();
             //Application.Run(new Form1());
 
-            Database.Connect();
+           // Database.Connect();
             //Debug.WriteLine(Database.RegisterUser("test", "test"));
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            Application.Run(new GameHub());
 
         }
     }
