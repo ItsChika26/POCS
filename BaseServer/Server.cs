@@ -20,11 +20,13 @@ namespace BaseServer
             running = true;
             var updater = new Thread(HandleMessages);
             updater.Start();
+            updater.Join();
         }
         private void HandleMessages()
         {
             Listener = new TcpListener(IPAddress.Any, 8000);
             Listener.Start();
+            Console.WriteLine("Server started!");
             while (running)
             {
                 var client = Listener.AcceptTcpClient();
