@@ -34,12 +34,15 @@
             GamesPanel = new Panel();
             panel5 = new Panel();
             panel4 = new Panel();
+            roundedPicture1 = new RoundedPicture();
             AccountPanel.SuspendLayout();
             GamesPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)roundedPicture1).BeginInit();
             SuspendLayout();
             // 
             // AccountPanel
             // 
+            AccountPanel.Controls.Add(roundedPicture1);
             AccountPanel.Controls.Add(button1);
             AccountPanel.Dock = DockStyle.Left;
             AccountPanel.Location = new Point(0, 0);
@@ -97,6 +100,14 @@
             panel4.Size = new Size(10, 628);
             panel4.TabIndex = 0;
             // 
+            // roundedPicture1
+            // 
+            roundedPicture1.Location = new Point(78, 94);
+            roundedPicture1.Name = "roundedPicture1";
+            roundedPicture1.Size = new Size(125, 62);
+            roundedPicture1.TabIndex = 1;
+            roundedPicture1.TabStop = false;
+            // 
             // GameHub
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -110,6 +121,7 @@
             Text = "GameHub";
             AccountPanel.ResumeLayout(false);
             GamesPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)roundedPicture1).EndInit();
             ResumeLayout(false);
         }
 
@@ -121,5 +133,6 @@
         private Panel panel5;
         private Panel panel4;
         private Button button1;
+        private RoundedPicture roundedPicture1;
     }
 }
