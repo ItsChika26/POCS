@@ -25,6 +25,15 @@ namespace LauncherApp
             string password = textBox_pass.Text;
 
             errorProvider_user.Clear();
+            var user = Database.LoginUser(username, password);
+            if (user != null) 
+            {
+                MessageBox.Show($"User {user.Username} with level {user.Level} logged in successfully");
+            }
+            else
+            {
+                errorProvider_user.SetError(textBox_user, "Invalid username or password");
+            }
         }
 
         private void button_register_Click(object sender, EventArgs e)
@@ -39,7 +48,7 @@ namespace LauncherApp
                 errorProvider_user.SetError(textBox_user, "Username must be between 4 and 25 characters long");
                 return;
             }
-            if (password.Length < 8)
+            if (password.Length < 8 || password.Length > 25)
             {
                 errorProvider_user.SetError(textBox_pass, "Password must be at least 8 characters long");
                 return;

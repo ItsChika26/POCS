@@ -9,17 +9,14 @@ namespace LauncherApp
     public class User
     {
         public string Username { get; set; }
-        public string Password { get; set; }
-        public int UserID { get; set; }
         public int Level { get; set; }
 
         public List<Game> games = new List<Game>();
 
-        public User(string username, string password)
+        public User(string username, int level)
         {
             Username = username;
-            Password = password;
-            Level = 0;
+            Level = level;
         }
 
         public void LevelUp()
@@ -27,10 +24,6 @@ namespace LauncherApp
             Level++;
         }
 
-        public void UpdatePassword(string password)
-        {
-            Password = password;
-        }
 
         public void UpdateUsername(string username)
         {
@@ -42,10 +35,6 @@ namespace LauncherApp
             Level = level;
         }
         
-        public void UpdateUserID(int userID)
-        {
-            UserID = userID;
-        }
         public void AddGame(Game game)
         {
             games.Add(game);
