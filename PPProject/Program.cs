@@ -11,7 +11,7 @@ namespace LauncherApp
         static void Main()
         {
             Database.Connect();
-            Debug.WriteLine(Database.RegisterUser("test", "test"));
+            //Debug.WriteLine(Database.RegisterUser("test", "test"));
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1());
         }

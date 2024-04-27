@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace LauncherApp
 {
@@ -39,9 +40,22 @@ namespace LauncherApp
             return true;
         }
 
-        public static User? LoginUser()
+        public static User? LoginUser(string username, string password)
         {
-            return new User("","");
+            string queryString = "SELECT username, level FROM dbo.[Users] where username = @username and password = @password;";
+
+            SqlCommand command = new SqlCommand(queryString, Connection);
+            command.Parameters.AddWithValue("@username", username);
+            command.Parameters.AddWithValue("@password", password);
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    return new User(username,reader.GetInt32(1));
+                }
+            }
+
+            return null;
         }
 
         public static void UpdateUserLevel(User user)
