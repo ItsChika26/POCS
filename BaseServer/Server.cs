@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using LauncherApp;
+
 
 namespace BaseServer
 {
@@ -15,6 +14,7 @@ namespace BaseServer
         private const int BufferSize = 1024;
 
         private bool running = false;
+
         public void Start()
         {
             running = true;
@@ -22,6 +22,7 @@ namespace BaseServer
             updater.Start();
             updater.Join();
         }
+
         private void HandleMessages()
         {
             Listener = new TcpListener(IPAddress.Any, 8000);
@@ -36,20 +37,28 @@ namespace BaseServer
                 var bytesRead = stream.Read(buffer, 0, BufferSize);
 
                 var data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                Console.WriteLine($"Received: {data}");
+                var request = JsonConvert.DeserializeObject<Request>(data);
+                Console.WriteLine(request.Action);
 
+                string responseMessage = ActionList.Actions[request.Action](request);
 
-
-                var response = Encoding.ASCII.GetBytes(data);
+                var response = Encoding.ASCII.GetBytes(responseMessage);
                 stream.Write(response, 0, response.Length);
             }
+
             Listener.Stop();
         }
+
+        private string HandleLogin(string username, string password)
+        {
+            // Handle login action here and return a response message
+            return "Login successful"; // Placeholder
+        }
+
         public void Stop()
         {
             running = false;
             Console.WriteLine("Server stopped!");
         }
-
     }
 }

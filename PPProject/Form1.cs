@@ -1,9 +1,10 @@
-using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace LauncherApp
 {
     public partial class Form1 : Form
     {
+        Client client = Client.Instance;
         public Form1()
         {
             InitializeComponent();
@@ -19,15 +20,18 @@ namespace LauncherApp
 
         }
 
-        private void button_login_Click(object sender, EventArgs e)
+        private async void button_login_Click(object sender, EventArgs e)
         {
             string username = textBox_user.Text;
             string password = textBox_pass.Text;
 
-            errorProvider_user.Clear();
-            var user = Database.LoginUser(username, password);
-            if (user != null) 
+            Request loginRequest = new() { Username = username, Password = password };
+            string message = JsonConvert.SerializeObject(loginRequest);
+
+            var response = await client.SendMessage(message);
+            if (response != null) 
             {
+                var user = JsonConvert.DeserializeObject<User>(response);
                 MessageBox.Show($"User {user.Username} with level {user.Level} logged in successfully");
             }
             else
@@ -36,7 +40,7 @@ namespace LauncherApp
             }
         }
 
-        private void button_register_Click(object sender, EventArgs e)
+        private async void button_register_Click(object sender, EventArgs e)
         {
             string username = textBox_user.Text;
             string password = textBox_pass.Text;
@@ -64,7 +68,12 @@ namespace LauncherApp
                 return;
             }
 
-            if(Database.RegisterUser(username, password))
+            Request registerRequest = new() { Username = username, Password = password };
+            var message = JsonConvert.SerializeObject(registerRequest);
+
+            var response = await client.SendMessage(message);
+
+            if(response!=null)
             {
                 MessageBox.Show("User registered successfully");
             }

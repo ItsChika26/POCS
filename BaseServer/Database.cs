@@ -1,12 +1,13 @@
 ﻿using LauncherApp;
 using Microsoft.Data.SqlClient;
+using Newtonsoft.Json;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace BaseServer
 {
     internal static class Database
     {
         private static SqlConnection? Connection;
-        //public SqlConnection connection;
 
         public static void Connect()
         { 
@@ -18,29 +19,42 @@ namespace BaseServer
             Connection.Open();
         }
 
-        public static bool RegisterUser(string username, string password)
+        public static string? RegisterUser(Request request)
         {
             string queryString = "SELECT username FROM dbo.[Users] where username = @username;";
 
             SqlCommand command = new SqlCommand(queryString, Connection);
-            command.Parameters.AddWithValue("@username", username);
+            command.Parameters.AddWithValue("@username", request.Username);
             using (SqlDataReader reader = command.ExecuteReader())
             {
-                if (reader.Read()) return false;
+                if (reader.Read()) return null;
             }
 
             queryString = "INSERT INTO dbo.[Users] (username, password, level) VALUES (@username, @password, @level);";
             SqlCommand insertCommand = new SqlCommand(queryString, Connection);
-            insertCommand.Parameters.AddWithValue("@username", username);
-            insertCommand.Parameters.AddWithValue("@password", password);
+            insertCommand.Parameters.AddWithValue("@username", request.Username);
+            insertCommand.Parameters.AddWithValue("@password", request.Password);
             insertCommand.Parameters.AddWithValue("@level", 0);
             insertCommand.ExecuteNonQuery();
-            return true;
+            return "1";
         }
 
-        public static User? LoginUser()
+        public static string? LoginUser(Request request)
         {
-            return new User("","");
+            string queryString = "SELECT username, level FROM dbo.[Users] where username = @username and password = @password;";
+
+            SqlCommand command = new SqlCommand(queryString, Connection);
+            command.Parameters.AddWithValue("@username", request.Username);
+            command.Parameters.AddWithValue("@password", request.Password);
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    return JsonConvert.SerializeObject(new User(request.Username,reader.GetInt32(1)));
+                }
+            }
+
+            return null;
         }
 
         public static void UpdateUserLevel(User user)
@@ -52,10 +66,6 @@ namespace BaseServer
         {
 
         }
-
-
-
-
           
     }
 }
