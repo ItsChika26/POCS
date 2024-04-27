@@ -1,8 +1,7 @@
-﻿using System;
-using System.Data;
+﻿using LauncherApp;
 using Microsoft.Data.SqlClient;
 
-namespace LauncherApp
+namespace BaseServer
 {
     internal static class Database
     {
