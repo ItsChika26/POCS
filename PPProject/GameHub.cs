@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LauncherApp.CustomControls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,8 +20,21 @@ namespace LauncherApp
             UsernameLabel.Text = usr.Username;
             LevelNumberLabel.Text = usr.Level.ToString();
             user = usr;
+            for (int i = 0; i < 10; i++)
+                FriendListPanel.Controls.Add(new FriendListItem());
+            InitEvents();
         }
 
+        private void InitEvents()
+        {
+            OnlineLabel.MouseEnter += FilterLabel_MouseEnter;
+            OnlineLabel.MouseLeave += FilterLabel_MouseLeave;
+            AllLabel.MouseEnter += FilterLabel_MouseEnter;
+            AllLabel.MouseLeave += FilterLabel_MouseLeave;
+            PendingLabel.MouseEnter += FilterLabel_MouseEnter;
+            PendingLabel.MouseLeave += FilterLabel_MouseLeave;
+
+        }
         private void splitter1_SplitterMoved(object sender, SplitterEventArgs e)
         {
 
@@ -43,9 +57,27 @@ namespace LauncherApp
 
         private void LogoutButton_Click(object sender, EventArgs e)
         {
+            this.Hide();
             var form = new LoginForm();
-            form.Show();
+            form.ShowDialog();
             this.Close();
+        }
+
+        private void LevelNumberLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FilterLabel_MouseEnter(object sender, EventArgs e)
+        {
+            var label = (Label)sender;
+            label.ForeColor = Color.FromArgb(255, 4, 198, 202);
+        }
+
+        private void FilterLabel_MouseLeave(object sender, EventArgs e)
+        {
+            var label = (Label)sender;
+            label.ForeColor = Color.White;
         }
     }
 }

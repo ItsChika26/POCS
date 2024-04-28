@@ -16,6 +16,7 @@ namespace LauncherApp
         public RoundedPicture()
         {
             InitializeComponent();
+            this.SizeMode = PictureBoxSizeMode.StretchImage;
             this.DoubleBuffered = true;
         }
         protected override void OnPaint(PaintEventArgs pe)

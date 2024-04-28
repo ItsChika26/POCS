@@ -33,8 +33,9 @@ namespace LauncherApp
             if (!response.IsNullOrEmpty()) 
             {
                 var user = JsonConvert.DeserializeObject<User>(response);
+                this.Hide();
                 var form = new GameHub(user);
-                form.Show();
+                form.ShowDialog();
                 this.Close();
                 //MessageBox.Show($"User {user.Username} with level {user.Level} logged in successfully");
             }

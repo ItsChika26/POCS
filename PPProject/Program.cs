@@ -9,10 +9,10 @@ namespace LauncherApp
         [STAThread]
         static async Task Main()
         {
-            var client = Client.Instance;
-            await client.Connect("20.215.40.53",8080);
+            //var client = Client.Instance;
+            //await client.Connect("20.215.40.53",8080);
             ApplicationConfiguration.Initialize();
-            Application.Run(new LoginForm());
+            Application.Run(new GameHub(new User("Omar",50)));
         }
     }
 }
