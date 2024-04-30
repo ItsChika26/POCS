@@ -8,7 +8,7 @@ namespace BaseServer
     internal static class Database
     {
         private static string ConnectionString =
-            "Server=tcp:ppprojectserver.database.windows.net,1433;Initial Catalog=PPProject;Persist Security Info=False;User ID=ppprojectadmin;Password=S473server;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            "Server=localhost;Database=master;Trusted_Connection=True;";
 
         public static string RegisterUser(Request request)
         {
