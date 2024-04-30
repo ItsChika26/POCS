@@ -8,12 +8,16 @@ namespace BaseServer
     internal static class Database
     {
         private static string ConnectionString =
-            "Server=localhost;Database=master;Trusted_Connection=True;";
+            "Server=localhost;Database=master;Trusted_Connection=True;TrustServerCertificate=True";
 
         public static string RegisterUser(Request request)
         {
             using SqlConnection Connection = new SqlConnection(ConnectionString);
-            Connection.Open();
+            try
+            {
+                Connection.Open();
+            }
+            catch (Exception e) { Console.WriteLine(e); }
             string queryString = "SELECT username FROM dbo.[Users] where username = @username;";
 
             SqlCommand command = new SqlCommand(queryString, Connection);
@@ -37,7 +41,10 @@ namespace BaseServer
         public static string LoginUser(Request request)
         {
             using SqlConnection Connection = new SqlConnection(ConnectionString);
+            try { 
             Connection.Open();
+            }
+            catch(Exception e) { Console.WriteLine(e); }
             string queryString = "SELECT username, level FROM dbo.[Users] where username = @username and password = @password;";
 
             SqlCommand command = new SqlCommand(queryString, Connection);
