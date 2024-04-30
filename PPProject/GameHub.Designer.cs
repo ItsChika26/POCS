@@ -228,7 +228,7 @@
             LevelProgressBar.Name = "LevelProgressBar";
             LevelProgressBar.Size = new Size(250, 20);
             LevelProgressBar.TabIndex = 4;
-            LevelProgressBar.Value = 50;
+            LevelProgressBar.Value = 20;
             // 
             // LevelLabel
             // 
