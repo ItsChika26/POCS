@@ -11,9 +11,11 @@ namespace BaseServer
         private TcpListener _listener;
         private CancellationTokenSource _cts;
         private const int BufferSize = 256;
+        private Mutex mutex;
 
         public void Start()
         {
+            mutex = new Mutex();
             _cts = new CancellationTokenSource();
             _listener = new TcpListener(IPAddress.Any, 8080);
             _listener.Start();
@@ -32,14 +34,14 @@ namespace BaseServer
         private void HandleMessages()
         {
             var client = _listener.AcceptTcpClient(); 
-            _ = HandleClient(client);
+            new Thread(()=> HandleClient(client)).Start();
         }
 
-        private async Task HandleClient(TcpClient client)
+        private void HandleClient(TcpClient client)
         {
             var buffer = new byte[BufferSize];
             var stream = client.GetStream();
-            var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            var bytesRead = stream.Read(buffer, 0, buffer.Length);
             var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
             var request = JsonConvert.DeserializeObject<Request>(data);
             Console.WriteLine("Request received: " + request.Action);
@@ -47,7 +49,7 @@ namespace BaseServer
             string responseMessage = ActionList.Actions[request.Action](request);
             var response = Encoding.UTF8.GetBytes(responseMessage);
             stream.Write(response, 0, response.Length);
-            await stream.FlushAsync();
+            stream.Flush();
             Console.WriteLine("Response sent: " + responseMessage);
         }
 
