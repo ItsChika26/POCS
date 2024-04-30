@@ -49,11 +49,14 @@ namespace BaseServer
             }
 
             queryString =
-                "INSERT INTO dbo.[Users] (username, password, level) VALUES (@username, @password, @level);";
+                "INSERT INTO dbo.[Users] (username, password, level, date_registered, XP) VALUES (@username, @password, @level, @date_registered, @XP);";
             SqlCommand insertCommand = new SqlCommand(queryString, Connection);
             insertCommand.Parameters.AddWithValue("@username", request.Username);
             insertCommand.Parameters.AddWithValue("@password", request.Password);
             insertCommand.Parameters.AddWithValue("@level", 0);
+            insertCommand.Parameters.AddWithValue("@date_registered", DateTime.Now);
+            insertCommand.Parameters.AddWithValue("@XP", 0);
+
             insertCommand.ExecuteNonQuery();
             return JsonConvert.SerializeObject(new Request(){Success = true});
         }
