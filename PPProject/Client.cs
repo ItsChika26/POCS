@@ -46,6 +46,7 @@ public class Client
                 Debug.WriteLine("Message sent: " + message);
             }
 
+            stream.FlushAsync();
             data = new byte[256];
             var response = string.Empty;
             var bytes = await stream.ReadAsync(data, 0, data.Length);

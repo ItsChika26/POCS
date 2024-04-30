@@ -37,20 +37,17 @@ namespace BaseServer
         {
             var stream = client.GetStream();
             var buffer = new byte[BufferSize];
-            var bytesRead = stream.Read(buffer, 0, BufferSize);
+            var bytesRead = await stream.ReadAsync(buffer, 0, BufferSize);
 
             var data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
             var request = JsonConvert.DeserializeObject<Request>(data);
             Console.WriteLine("Request received: " + request.Action);
 
             string responseMessage = ActionList.Actions[request.Action](request);
-
-            if (!stream.DataAvailable)
-            {
                 var response = Encoding.ASCII.GetBytes(responseMessage);
-                stream.Write(response, 0, response.Length);
+            _ = await stream.ReadAsync(response, 0, response.Length);
+            _ = stream.FlushAsync();
                 Console.WriteLine("Response sent: " + responseMessage);
-            }
         }
 
 
