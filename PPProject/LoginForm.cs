@@ -35,6 +35,7 @@ namespace LauncherApp
             
             string username = textBox_user.Text;
             string password = textBox_pass.Text;
+            errorProvider_user.Clear();
 
             Request loginRequest = new() { Username = username, Password = password, Action = "Login"};
             string message = JsonConvert.SerializeObject(loginRequest);
@@ -94,8 +95,8 @@ namespace LauncherApp
 
             Request registerRequest = new() { Username = username, Password = password,Action = "Register"};
             var message = JsonConvert.SerializeObject(registerRequest);
-            var check = await client.SendMessage(message);
-            var response = JsonConvert.DeserializeObject<Request>(check);
+
+            var response = JsonConvert.DeserializeObject<Request>(await client.SendMessage(message));
 
             if(response.Success)
             {

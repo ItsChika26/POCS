@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 public class Client
 {
-
     private static Client? instance;
-    private static readonly object padlock = new object();
-
     private TcpClient client;
     private int index = 0;
     private NetworkStream stream;
@@ -17,13 +14,7 @@ public class Client
 
     public static Client Instance
     {
-        get
-        {
-            lock (padlock)
-            {
-                return instance ??= new Client();
-            }
-        }
+        get { return instance ??= new Client(); }
     }
 
     private Client()
@@ -46,13 +37,26 @@ public class Client
 
     public async Task<string?> SendMessage(string message)
     {
-        var data = Encoding.ASCII.GetBytes(message);
-        await stream.WriteAsync(data, 0, data.Length);
+        try
+        {
+            var data = Encoding.ASCII.GetBytes(message);
+            if (!stream.DataAvailable)
+            {
+                await stream.WriteAsync(data, 0, data.Length);
+                Debug.WriteLine("Message sent: " + message);
+            }
 
-        data = new byte[256];
-        var response = string.Empty;
-        var bytes = await stream.ReadAsync(data, 0, data.Length);
-        response = Encoding.ASCII.GetString(data, 0, bytes);
-        return response;
+            data = new byte[256];
+            var response = string.Empty;
+            var bytes = await stream.ReadAsync(data, 0, data.Length);
+            response = Encoding.ASCII.GetString(data, 0, bytes);
+            Debug.WriteLine("Response received: " + response);
+            return response;
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine(e);
+            return null;
+        }
     }
 }

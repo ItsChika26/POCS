@@ -29,7 +29,7 @@ namespace BaseServer
             Console.WriteLine("Server started!");
             while (running)
             {
-                var client = Listener.AcceptTcpClient();
+                var client = await Listener.AcceptTcpClientAsync();
                 HandleClient(client);
             }
         }
@@ -38,17 +38,22 @@ namespace BaseServer
         {
             var stream = client.GetStream();
             var buffer = new byte[BufferSize];
-            var bytesRead = await stream.ReadAsync(buffer, 0, BufferSize);
+            var bytesRead = stream.Read(buffer, 0, BufferSize);
 
             var data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
             var request = JsonConvert.DeserializeObject<Request>(data);
-            Console.WriteLine(request.Action);
+            Console.WriteLine("Request received: " + request.Action);
 
             string responseMessage = ActionList.Actions[request.Action](request);
 
-            var response = Encoding.ASCII.GetBytes(responseMessage);
-            await stream.WriteAsync(response, 0, response.Length);
+            if (!stream.DataAvailable)
+            {
+                var response = Encoding.ASCII.GetBytes(responseMessage);
+                stream.Write(response, 0, response.Length);
+                Console.WriteLine("Response sent: " + responseMessage);
+            }
         }
+
 
         public void Stop()
         {
