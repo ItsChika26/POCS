@@ -8,6 +8,7 @@ public class Client
 {
     private static Client? instance;
     private TcpClient client;
+    private NetworkStream stream;
     public bool IsConnected => client.Connected;
 
     public static Client Instance
@@ -25,6 +26,8 @@ public class Client
         try
         {
             client.Connect(serverIP, serverPort);
+            Debug.WriteLine("Connected to server");
+            stream = client.GetStream();
         }
         catch (Exception e)
         {
@@ -34,7 +37,6 @@ public class Client
 
     public async Task<string?> SendMessage(string message)
     {
-        await using var stream = client.GetStream();
         try
         {
             var data = Encoding.ASCII.GetBytes(message);
