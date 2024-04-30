@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace LauncherApp
 {
-    public class User
+
+    public class Player
     {
         public string Username { get; set; }
         public int Level { get; set; }
 
         public List<Game> games = new List<Game>();
 
-        public User(string username, int level)
+        public Player(string username, int level)
         {
             Username = username;
             Level = level;
@@ -24,21 +25,34 @@ namespace LauncherApp
             Level++;
         }
 
+        public void AddGame(Game game)
+        {
+            games.Add(game);
+        }
+    }
+    public class User : Player
+    {
+        private static User? user;
+        public static User Instance
+        {
+            get
+            {
+                return user ??= new User("Guest", 0);
+            }
+        }
+        private User(string username,int level) : base(username, level)
+        {
+        }
 
+        public void LoadUser(string username, int level)
+        {
+            user = new User(username, level);
+        }
         public void UpdateUsername(string username)
         {
             Username = username;
         }
 
-        public void UpdateLevel(int level)
-        {
-            Level = level;
-        }
-        
-        public void AddGame(Game game)
-        {
-            games.Add(game);
-        }
    
     }
 }

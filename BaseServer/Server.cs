@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json;
 using LauncherApp;
-
+using System.Threading.Tasks;
 
 namespace BaseServer
 {
@@ -13,28 +13,33 @@ namespace BaseServer
         private TcpListener Listener;
         private const int BufferSize = 1024;
 
-        private bool running = false;
+        public volatile bool running = false;
 
         public void Start()
         {
             running = true;
-            var updater = new Thread(HandleMessages);
-            updater.Start();
-            updater.Join();
+            Task.Run(() => HandleMessages());
         }
 
-        private void HandleMessages()
+        private async Task HandleMessages()
         {
-            Listener = new TcpListener(8080);
+            Listener = new TcpListener(IPAddress.Any, 8080);
             Listener.Start();
             Console.WriteLine("Server started!");
             while (running)
             {
-                var client = Listener.AcceptTcpClient();
-                var stream = client.GetStream();
+                var client = await Listener.AcceptTcpClientAsync();
+                _ = Task.Run(() => HandleClient(client));
+            }
 
+        }
+
+        private async Task HandleClient(TcpClient client)
+        {
+            using (var stream = client.GetStream())
+            {
                 var buffer = new byte[BufferSize];
-                var bytesRead = stream.Read(buffer, 0, BufferSize);
+                var bytesRead = await stream.ReadAsync(buffer, 0, BufferSize);
 
                 var data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                 var request = JsonConvert.DeserializeObject<Request>(data);
@@ -43,12 +48,9 @@ namespace BaseServer
                 string responseMessage = ActionList.Actions[request.Action](request);
 
                 var response = Encoding.ASCII.GetBytes(responseMessage);
-                stream.Write(response, 0, response.Length);
+                await stream.WriteAsync(response, 0, response.Length);
             }
-
-            Listener.Stop();
         }
-
 
         public void Stop()
         {

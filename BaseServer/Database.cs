@@ -7,40 +7,37 @@ namespace BaseServer
 {
     internal static class Database
     {
-        private static SqlConnection? Connection;
+        private static string ConnectionString =
+            "Server=tcp:ppprojectserver.database.windows.net,1433;Initial Catalog=PPProject;Persist Security Info=False;User ID=ppprojectadmin;Password=S473server;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
-        public static void Connect()
-        { 
-            if(Connection is not null) return;
-
-            var connectionString = "Server=localhost;Database=master;Trusted_Connection=True;";
-
-            Connection = new SqlConnection(connectionString);
-            Connection.Open();
-        }
-
-        public static string? RegisterUser(Request request)
+        public static string RegisterUser(Request request)
         {
+            using SqlConnection Connection = new SqlConnection(ConnectionString);
+            Connection.Open();
             string queryString = "SELECT username FROM dbo.[Users] where username = @username;";
 
             SqlCommand command = new SqlCommand(queryString, Connection);
             command.Parameters.AddWithValue("@username", request.Username);
             using (SqlDataReader reader = command.ExecuteReader())
             {
-                if (reader.Read()) return null;
+                if (reader.Read())
+                    return JsonConvert.SerializeObject(new Request(){Success = false, FailureMessage = "User alread exists"});
             }
 
-            queryString = "INSERT INTO dbo.[Users] (username, password, level) VALUES (@username, @password, @level);";
+            queryString =
+                "INSERT INTO dbo.[Users] (username, password, level) VALUES (@username, @password, @level);";
             SqlCommand insertCommand = new SqlCommand(queryString, Connection);
             insertCommand.Parameters.AddWithValue("@username", request.Username);
             insertCommand.Parameters.AddWithValue("@password", request.Password);
             insertCommand.Parameters.AddWithValue("@level", 0);
             insertCommand.ExecuteNonQuery();
-            return "1";
+            return JsonConvert.SerializeObject(new Request(){Success = true});
         }
 
-        public static string? LoginUser(Request request)
+        public static string LoginUser(Request request)
         {
+            using SqlConnection Connection = new SqlConnection(ConnectionString);
+            Connection.Open();
             string queryString = "SELECT username, level FROM dbo.[Users] where username = @username and password = @password;";
 
             SqlCommand command = new SqlCommand(queryString, Connection);
@@ -50,11 +47,10 @@ namespace BaseServer
             {
                 if (reader.Read())
                 {
-                    return JsonConvert.SerializeObject(new User(request.Username,reader.GetInt32(1)));
+                    return JsonConvert.SerializeObject(new Request(){Username = request.Username,Level = reader.GetInt32(1),Success = true});
                 }
             }
-
-            return null;
+            return JsonConvert.SerializeObject(new Request(){Success = false, FailureMessage = "Invalid username or password"});
         }
 
         public static void UpdateUserLevel(User user)
