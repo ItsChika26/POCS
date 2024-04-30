@@ -45,6 +45,7 @@
             LogoutButton = new Button();
             panel6 = new Panel();
             FriendsPanel = new Panel();
+            FriendListContainerPanel = new Panel();
             FriendListPanel = new FlowLayoutPanel();
             AddFriendButton = new Button();
             panel3 = new Panel();
@@ -70,6 +71,7 @@
             panel12.SuspendLayout();
             panel11.SuspendLayout();
             FriendsPanel.SuspendLayout();
+            FriendListContainerPanel.SuspendLayout();
             panel3.SuspendLayout();
             GamesPanel.SuspendLayout();
             panel8.SuspendLayout();
@@ -140,9 +142,9 @@
             label5.Location = new Point(0, 2);
             label5.Name = "label5";
             label5.Padding = new Padding(4, 0, 0, 0);
-            label5.Size = new Size(127, 25);
+            label5.Size = new Size(137, 25);
             label5.TabIndex = 4;
-            label5.Text = "Achievments";
+            label5.Text = "Achievements";
             // 
             // label3
             // 
@@ -152,9 +154,9 @@
             label3.Location = new Point(13, 50);
             label3.Name = "label3";
             label3.Padding = new Padding(4, 0, 0, 0);
-            label3.Size = new Size(76, 20);
+            label3.Size = new Size(80, 20);
             label3.TabIndex = 14;
-            label3.Text = "Welcome";
+            label3.Text = "Welcome,";
             // 
             // UsernameLabel
             // 
@@ -264,7 +266,7 @@
             // 
             // FriendsPanel
             // 
-            FriendsPanel.Controls.Add(FriendListPanel);
+            FriendsPanel.Controls.Add(FriendListContainerPanel);
             FriendsPanel.Controls.Add(AddFriendButton);
             FriendsPanel.Controls.Add(panel3);
             FriendsPanel.Controls.Add(panel2);
@@ -278,12 +280,24 @@
             FriendsPanel.TabIndex = 1;
             FriendsPanel.Paint += FriendsPanel_Paint;
             // 
+            // FriendListContainerPanel
+            // 
+            FriendListContainerPanel.AutoScroll = true;
+            FriendListContainerPanel.BackColor = Color.FromArgb(42, 31, 61);
+            FriendListContainerPanel.Controls.Add(FriendListPanel);
+            FriendListContainerPanel.Location = new Point(11, 207);
+            FriendListContainerPanel.Name = "FriendListContainerPanel";
+            FriendListContainerPanel.Padding = new Padding(5);
+            FriendListContainerPanel.Size = new Size(281, 413);
+            FriendListContainerPanel.TabIndex = 8;
+            // 
             // FriendListPanel
             // 
+            FriendListPanel.AutoSize = true;
             FriendListPanel.FlowDirection = FlowDirection.TopDown;
-            FriendListPanel.Location = new Point(11, 212);
+            FriendListPanel.Location = new Point(8, 9);
             FriendListPanel.Name = "FriendListPanel";
-            FriendListPanel.Size = new Size(281, 404);
+            FriendListPanel.Size = new Size(245, 396);
             FriendListPanel.TabIndex = 8;
             // 
             // AddFriendButton
@@ -507,6 +521,8 @@
             panel11.PerformLayout();
             FriendsPanel.ResumeLayout(false);
             FriendsPanel.PerformLayout();
+            FriendListContainerPanel.ResumeLayout(false);
+            FriendListContainerPanel.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             GamesPanel.ResumeLayout(false);
@@ -554,5 +570,6 @@
         private Panel panel12;
         private Label label5;
         private Panel panel13;
+        private Panel FriendListContainerPanel;
     }
 }

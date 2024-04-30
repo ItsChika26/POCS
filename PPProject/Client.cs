@@ -37,12 +37,11 @@ public class Client
         }
     }
 
-    public async Task SendMessageAsync(string message)
+    public async Task Connect(string serverIP, int serverPort)
     {
-        var buffer = Encoding.UTF8.GetBytes(message);
-        await stream.WriteAsync(buffer, 0, buffer.Length);
-        await stream.FlushAsync();
-        Debug.WriteLine("Message sent: " + message);
+        client = new TcpClient();
+        await client.ConnectAsync(serverIP, serverPort);
+        stream = client.GetStream();
     }
 
     public async Task<string?> ReceiveMessageAsync()

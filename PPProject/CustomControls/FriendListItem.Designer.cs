@@ -50,7 +50,7 @@
             // UsernameLabel
             // 
             UsernameLabel.AutoSize = true;
-            UsernameLabel.BackColor = Color.FromArgb(42, 31, 61);
+            UsernameLabel.BackColor = Color.FromArgb(60, 44, 98);
             UsernameLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             UsernameLabel.ForeColor = SystemColors.ButtonHighlight;
             UsernameLabel.Location = new Point(51, 2);
@@ -62,7 +62,7 @@
             // LevelLabel
             // 
             LevelLabel.AutoSize = true;
-            LevelLabel.BackColor = Color.FromArgb(42, 31, 61);
+            LevelLabel.BackColor = Color.FromArgb(60, 44, 98);
             LevelLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
             LevelLabel.ForeColor = SystemColors.ActiveBorder;
             LevelLabel.Location = new Point(51, 25);
@@ -74,7 +74,7 @@
             // LevelNumberLabel
             // 
             LevelNumberLabel.AutoSize = true;
-            LevelNumberLabel.BackColor = Color.FromArgb(42, 31, 61);
+            LevelNumberLabel.BackColor = Color.FromArgb(60, 44, 98);
             LevelNumberLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
             LevelNumberLabel.ForeColor = Color.FromArgb(255, 128, 0);
             LevelNumberLabel.Location = new Point(92, 25);
@@ -92,14 +92,14 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(42, 31, 61);
+            BackColor = Color.FromArgb(60, 44, 98);
             Controls.Add(LevelNumberLabel);
             Controls.Add(LevelLabel);
             Controls.Add(UsernameLabel);
             Controls.Add(ProfilePicture);
             Name = "FriendListItem";
             Padding = new Padding(2);
-            Size = new Size(290, 50);
+            Size = new Size(239, 50);
             ((System.ComponentModel.ISupportInitialize)ProfilePicture).EndInit();
             ((System.ComponentModel.ISupportInitialize)fileSystemWatcher1).EndInit();
             ResumeLayout(false);
