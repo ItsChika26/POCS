@@ -45,7 +45,7 @@ namespace BaseServer
 
             string responseMessage = ActionList.Actions[request.Action](request);
                 var response = Encoding.ASCII.GetBytes(responseMessage);
-            _ = await stream.ReadAsync(response, 0, response.Length);
+            _ = await stream.WriteAsync(response, 0, response.Length);
             _ = stream.FlushAsync();
                 Console.WriteLine("Response sent: " + responseMessage);
         }
