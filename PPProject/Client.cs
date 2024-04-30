@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 public class Client
 {
 
-    private static Client instance = null;
+    private static Client? instance;
     private static readonly object padlock = new object();
 
     private TcpClient client;
     private NetworkStream stream;
-    Client()
-    {
-    }
+    public bool IsConnected => client.Connected;
 
     public static Client Instance
     {
@@ -21,20 +19,23 @@ public class Client
         {
             lock (padlock)
             {
-                if (instance == null)
-                {
-                    instance = new Client();
-                }
-                return instance;
+                return instance ??= new Client();
             }
         }
     }
 
-    public async Task Connect(string serverIP, int serverPort)
+    public void Connect(string serverIP, int serverPort)
     {
-        client = new TcpClient();
-        await client.ConnectAsync(serverIP, serverPort);
-        stream = client.GetStream();
+        try
+        {
+            client = new TcpClient();
+            client.Connect(serverIP, serverPort);
+            stream = client.GetStream();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     public async Task<string?> SendMessage(string message)
