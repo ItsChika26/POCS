@@ -21,11 +21,11 @@ public class Client
         client = new TcpClient();
     }
 
-    public void Connect(string serverIP, int serverPort)
+    public async Task ConnectAsync(string serverIP, int serverPort)
     {
         try
         {
-            client.Connect(serverIP, serverPort);
+            await client.ConnectAsync(serverIP, serverPort);
             Debug.WriteLine("Connected to server");
             stream = client.GetStream();
         }
@@ -35,30 +35,27 @@ public class Client
         }
     }
 
-    public async Task<string?> SendMessage(string message)
+    public async Task SendMessageAsync(string message)
     {
-        try
-        {
-            var data = message.ToCharArray();
-            await using (StreamWriter writer = new StreamWriter(stream)){ 
-                await writer.WriteAsync(data); 
-                await writer.FlushAsync();
-            }
-            Debug.WriteLine("Message sent: " + message);
+        var buffer = Encoding.UTF8.GetBytes(message);
+        await stream.WriteAsync(buffer, 0, buffer.Length);
+        await stream.FlushAsync();
+        Debug.WriteLine("Message sent: " + message);
+    }
 
-            
-            var response = string.Empty;
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                response = await reader.ReadToEndAsync();
-            }
-            Debug.WriteLine("Response received: " + response);
-            return response;
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e);
-            return null;
-        }
+    public async Task<string?> ReceiveMessageAsync()
+    {
+        var responseBuffer = new byte[1024];
+        var responseLength = await stream.ReadAsync(responseBuffer, 0, responseBuffer.Length);
+        var response = Encoding.UTF8.GetString(responseBuffer, 0, responseLength);
+        Debug.WriteLine("Response received: " + response);
+        return response;
+    }
+
+    public void Disconnect()
+    {
+        stream.Close();
+        client.Close();
+        Debug.WriteLine("Disconnected from server");
     }
 }

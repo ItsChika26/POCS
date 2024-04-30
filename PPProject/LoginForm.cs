@@ -25,7 +25,7 @@ namespace LauncherApp
         {
             if (!client.IsConnected)
             { 
-                client.Connect("20.215.40.53",8080);
+                client.ConnectAsync("20.215.40.53",8080);
                 if (!client.IsConnected)
                 {
                     MessageBox.Show("Server is not available");
@@ -39,8 +39,9 @@ namespace LauncherApp
 
             Request loginRequest = new() { Username = username, Password = password, Action = "Login"};
             string message = JsonConvert.SerializeObject(loginRequest);
+            await client.SendMessageAsync(message);
 
-            var response = JsonConvert.DeserializeObject<Request>(await client.SendMessage(message)) ;
+            var response = JsonConvert.DeserializeObject<Request>(await client.ReceiveMessageAsync()) ;
             if (response.Success) 
             {
                 User.Instance.LoadUser(username, response.Level);
@@ -60,7 +61,7 @@ namespace LauncherApp
         {
             if (!client.IsConnected)
             { 
-                client.Connect("20.215.40.53",8080);
+                await client.ConnectAsync("20.215.40.53",8080);
                 if (!client.IsConnected)
                 {
                     MessageBox.Show("Server is not available");
@@ -95,8 +96,8 @@ namespace LauncherApp
 
             Request registerRequest = new() { Username = username, Password = password,Action = "Register"};
             var message = JsonConvert.SerializeObject(registerRequest);
-
-            var response = JsonConvert.DeserializeObject<Request>(await client.SendMessage(message));
+            await client.SendMessageAsync(message);
+            var response = JsonConvert.DeserializeObject<Request>(await client.ReceiveMessageAsync());
 
             if(response.Success)
             {
