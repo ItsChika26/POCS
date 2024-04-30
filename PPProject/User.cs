@@ -12,7 +12,6 @@ namespace LauncherApp
         public string Username { get; set; }
         public int Level { get; set; }
 
-        public List<Game> games = new List<Game>();
 
         public Player(string username, int level)
         {
@@ -25,14 +24,14 @@ namespace LauncherApp
             Level++;
         }
 
-        public void AddGame(Game game)
-        {
-            games.Add(game);
-        }
     }
     public class User : Player
     {
         private static User? user;
+
+        public List<Game> games = new List<Game>();
+
+        List<Friend> friends = new List<Friend>();
         public static User Instance
         {
             get
@@ -48,11 +47,29 @@ namespace LauncherApp
         {
             user = new User(username, level);
         }
+
+        public void UpdateFriends(List<Friend> _friends)
+        {
+            friends = _friends;
+        }
         public void UpdateUsername(string username)
         {
             Username = username;
         }
+        public void AddGame(Game game)
+        {
+            games.Add(game);
+        }
+    }
 
-   
+    public class Friend : Player
+    {
+        public bool IsOnline { get; set; }
+        public bool IsPending { get; set; }
+        public Friend(string username, int level, bool isOnline, bool isPending) : base(username, level)
+        {
+            IsOnline = isOnline;
+            IsPending = isPending;
+        }
     }
 }

@@ -313,6 +313,7 @@
             AddFriendButton.TabIndex = 7;
             AddFriendButton.Text = "Add Friend";
             AddFriendButton.UseVisualStyleBackColor = false;
+            AddFriendButton.Click += AddFriendButton_Click;
             // 
             // panel3
             // 

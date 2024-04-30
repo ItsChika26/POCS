@@ -92,5 +92,11 @@ namespace LauncherApp
             var label = (Label)sender;
             label.ForeColor = Color.White;
         }
+
+        private void AddFriendButton_Click(object sender, EventArgs e)
+        {
+            var addFriendControl = new AddFriendControl();
+            GamesPanel.Controls.Add(addFriendControl);
+        }
     }
 }

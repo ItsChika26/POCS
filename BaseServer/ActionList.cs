@@ -7,7 +7,9 @@ namespace BaseServer
         public static Dictionary<string, Func<Request, string?>> Actions = new()
         {
             { "Login", Database.LoginUser },
-            { "Register", Database.RegisterUser }
+            { "Register", Database.RegisterUser },
+            { "LoadFriends", Database.LoadFriends },
+            { "AddFriend",Database.AddFriend }
         };
     }
 }
