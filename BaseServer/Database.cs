@@ -13,7 +13,7 @@ namespace BaseServer
         { 
             if(Connection is not null) return;
 
-            var connectionString = "Server=tcp:ppprojectserver.database.windows.net,1433;Initial Catalog=PPProject;Persist Security Info=False;User ID=ppprojectadmin;Password=S473server;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            var connectionString = "Server=localhost;Database=master;Trusted_Connection=True;";
 
             Connection = new SqlConnection(connectionString);
             Connection.Open();
