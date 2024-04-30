@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,17 +25,21 @@ public class Client
         }
     }
 
+    private Client()
+    {
+        client = new TcpClient();
+    }
+
     public void Connect(string serverIP, int serverPort)
     {
         try
         {
-            client = new TcpClient();
             client.Connect(serverIP, serverPort);
             stream = client.GetStream();
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Debug.WriteLine(e);
         }
     }
 
