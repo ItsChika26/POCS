@@ -41,19 +41,17 @@ public class Client
         {
             var data = message.ToCharArray();
             await using (StreamWriter writer = new StreamWriter(stream)){ 
-                await writer.WriteAsync(data, 0, data.Length);
+                await writer.WriteAsync(data); 
+                await writer.FlushAsync();
             }
             Debug.WriteLine("Message sent: " + message);
 
-            await stream.FlushAsync();
-            var responsemessage = new char[256];
+            
             var response = string.Empty;
             using (StreamReader reader = new StreamReader(stream))
             {
-                var bytes = await reader.ReadBlockAsync(responsemessage, 0, 256);
+                response = await reader.ReadToEndAsync();
             }
-
-            response = responsemessage.ToString();  
             Debug.WriteLine("Response received: " + response);
             return response;
         }

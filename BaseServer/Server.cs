@@ -36,20 +36,18 @@ namespace BaseServer
         private async Task HandleClient(TcpClient client)
         {
             var buffer = new char[BufferSize];
-            int bytesRead = 0;
+            var data = string.Empty;
             using (StreamReader stream = new StreamReader(client.GetStream())) { 
-                bytesRead = await stream.ReadAsync(buffer, 0, BufferSize);
+                data = await stream.ReadToEndAsync();
             }
-            var data = new string(buffer, 0, bytesRead);
             var request = JsonConvert.DeserializeObject<Request>(data);
             Console.WriteLine("Request received: " + request.Action);
-
 
             string responseMessage = ActionList.Actions[request.Action](request);
             var response = responseMessage.ToCharArray(); 
             await using (StreamWriter stream = new StreamWriter(client.GetStream())){ 
                 await stream.WriteAsync(response, 0, response.Length); 
-                _ = stream.FlushAsync();
+                await stream.FlushAsync();
             }
             Console.WriteLine("Response sent: " + responseMessage);
         }
