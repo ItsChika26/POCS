@@ -9,6 +9,7 @@ public class Client
     private static Client? instance;
     private TcpClient client;
     private NetworkStream stream;
+    public Guid Id { get; }
     public bool IsConnected => client.Connected;
 
     public static Client Instance
@@ -19,6 +20,7 @@ public class Client
     private Client()
     {
         client = new TcpClient();
+        Id = Guid.NewGuid();
     }
 
     public async Task ConnectAsync(string serverIP, int serverPort)

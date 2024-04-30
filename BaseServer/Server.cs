@@ -11,35 +11,45 @@ namespace BaseServer
         private TcpListener _listener;
         private CancellationTokenSource _cts;
         private const int BufferSize = 256;
-        private Mutex mutex;
+        private List<TcpClient> _clients;
 
         public void Start()
         {
-            mutex = new Mutex();
+            _clients = new();
             _cts = new CancellationTokenSource();
             _listener = new TcpListener(IPAddress.Any, 8080);
             _listener.Start();
             
             Console.WriteLine("Server started!");
-            var thread = new Thread(() =>
+            Task.Run(AcceptClientsAsync, _cts.Token);
+        }
+
+        private async Task AcceptClientsAsync()
+        {
+            while (!_cts.Token.IsCancellationRequested)
+            { 
+                var client = await _listener.AcceptTcpClientAsync();
+                _clients.Add(client);
+                _ = Task.Run(() => ProcessRequests(client));
+            }
+        }
+
+        private void BroadcastMessage(string message)
+        {
+            foreach (var client in _clients)
             {
-                while (!_cts.Token.IsCancellationRequested)
-                {
-                    HandleMessages();
-                }
-            });
-            thread.Start();
+                var stream = client.GetStream();
+                var response = Encoding.UTF8.GetBytes(message);
+                stream.Write(response, 0, response.Length);
+                stream.Flush();
+            }
         }
 
-        private void HandleMessages()
+        private void ProcessRequests(TcpClient client)
         {
-            var client = _listener.AcceptTcpClient(); 
-            new Thread(()=> HandleClient(client)).Start();
-        }
-
-        private void HandleClient(TcpClient client)
-        {
-            var buffer = new byte[BufferSize];
+            while(!_cts.Token.IsCancellationRequested)
+            {
+                var buffer = new byte[BufferSize];
             var stream = client.GetStream();
             var bytesRead = stream.Read(buffer, 0, buffer.Length);
             var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
@@ -51,6 +61,7 @@ namespace BaseServer
             stream.Write(response, 0, response.Length);
             stream.Flush();
             Console.WriteLine("Response sent: " + responseMessage);
+            }
         }
 
         public void Stop()
