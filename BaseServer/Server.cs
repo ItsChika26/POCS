@@ -18,18 +18,19 @@ namespace BaseServer
         public void Start()
         {
             running = true;
-            Task.Run(() => HandleMessages());
+            Thread thread = new Thread(HandleMessages);
+            thread.Start();
         }
 
-        private async Task HandleMessages()
+        private void HandleMessages()
         {
             Listener = new TcpListener(IPAddress.Any, 8080);
             Listener.Start();
             Console.WriteLine("Server started!");
             while (running)
             {
-                var client = await Listener.AcceptTcpClientAsync();
-                _ = Task.Run(() => HandleClient(client));
+                var client = Listener.AcceptTcpClient();
+                HandleClient(client);
             }
         }
 
