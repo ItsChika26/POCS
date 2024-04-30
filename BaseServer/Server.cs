@@ -19,16 +19,20 @@ namespace BaseServer
             _listener.Start();
             
             Console.WriteLine("Server started!");
-            Task.Run(() => HandleMessages(_cts.Token));
+            var thread = new Thread(() =>
+            {
+                while (!_cts.Token.IsCancellationRequested)
+                {
+                    HandleMessages();
+                }
+            });
+            thread.Start();
         }
 
-        private async Task HandleMessages(CancellationToken token)
+        private void HandleMessages()
         {
-            while (!token.IsCancellationRequested)
-            {
-                var client = await _listener.AcceptTcpClientAsync(token);
-                _ = HandleClient(client);
-            }
+            var client = _listener.AcceptTcpClient(); 
+            _ = HandleClient(client);
         }
 
         private async Task HandleClient(TcpClient client)

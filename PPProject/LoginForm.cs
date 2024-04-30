@@ -25,7 +25,7 @@ namespace LauncherApp
         {
             if (!client.IsConnected)
             { 
-                client.ConnectAsync("20.215.40.53",8080);
+                await client.ConnectAsync("20.215.40.53",8080);
                 if (!client.IsConnected)
                 {
                     MessageBox.Show("Server is not available");
