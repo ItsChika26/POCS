@@ -42,7 +42,7 @@ namespace BaseServer
         {
             using SqlConnection Connection = new SqlConnection(ConnectionString);
             try { 
-            Connection.Open();
+                Connection.Open();
             }
             catch(Exception e) { Console.WriteLine(e); }
             string queryString = "SELECT username, level FROM dbo.[Users] where username = @username and password = @password;";

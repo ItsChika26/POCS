@@ -11,6 +11,7 @@ public class Client
     private static readonly object padlock = new object();
 
     private TcpClient client;
+    private int index = 0;
     private NetworkStream stream;
     public bool IsConnected => client.Connected;
 
@@ -53,11 +54,5 @@ public class Client
         var bytes = await stream.ReadAsync(data, 0, data.Length);
         response = Encoding.ASCII.GetString(data, 0, bytes);
         return response;
-    }
-
-    public void Disconnect()
-    {
-        stream.Close();
-        client.Close();
     }
 }

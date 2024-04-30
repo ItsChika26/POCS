@@ -57,6 +57,15 @@ namespace LauncherApp
 
         private async void button_register_Click(object sender, EventArgs e)
         {
+            if (!client.IsConnected)
+            { 
+                client.Connect("20.215.40.53",8080);
+                if (!client.IsConnected)
+                {
+                    MessageBox.Show("Server is not available");
+                    return;
+                }
+            }
             string username = textBox_user.Text;
             string password = textBox_pass.Text;
 
@@ -85,8 +94,8 @@ namespace LauncherApp
 
             Request registerRequest = new() { Username = username, Password = password,Action = "Register"};
             var message = JsonConvert.SerializeObject(registerRequest);
-
-            var response = JsonConvert.DeserializeObject<Request>(await client.SendMessage(message));
+            var check = await client.SendMessage(message);
+            var response = JsonConvert.DeserializeObject<Request>(check);
 
             if(response.Success)
             {
