@@ -29,13 +29,13 @@ namespace BaseServer
             while (running)
             {
                 var client = await Listener.AcceptTcpClientAsync();
-                HandleClient(client);
+                _ = Task.Run(() => HandleClient(client));
             }
         }
 
         private async Task HandleClient(TcpClient client)
         {
-            var stream = client.GetStream();
+            await using var stream = client.GetStream();
             var buffer = new byte[BufferSize];
             var bytesRead = stream.Read(buffer, 0, BufferSize);
 
