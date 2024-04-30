@@ -35,7 +35,7 @@ namespace BaseServer
 
         private async Task HandleClient(TcpClient client)
         {
-            await using var stream = client.GetStream();
+            var stream = client.GetStream();
             var buffer = new byte[BufferSize];
             var bytesRead = stream.Read(buffer, 0, BufferSize);
 
