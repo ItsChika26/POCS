@@ -44,6 +44,13 @@ public class Client
         stream = client.GetStream();
     }
 
+    public async Task SendMessageAsync(string message)
+    {
+        var messageBuffer = Encoding.UTF8.GetBytes(message);
+        await stream.WriteAsync(messageBuffer, 0, messageBuffer.Length);
+        Debug.WriteLine("Message sent: " + message);
+    }
+
     public async Task<string?> ReceiveMessageAsync()
     {
         var responseBuffer = new byte[1024];
