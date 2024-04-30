@@ -8,7 +8,7 @@ public class Client
 
     private static Client instance = null;
     private static readonly object padlock = new object();
-
+     
     private TcpClient client;
     private NetworkStream stream;
     Client()
@@ -30,11 +30,24 @@ public class Client
         }
     }
 
-    public async Task Connect(string serverIP, int serverPort)
+    public bool IsConnected()
     {
-        client = new TcpClient();
-        await client.ConnectAsync(serverIP, serverPort);
-        stream = client.GetStream();
+        return client == null ? false : client.Connected;
+    }
+    public async Task<bool> Connect(string serverIP, int serverPort)
+    {
+        try
+        {
+            client = new TcpClient();
+            await client.ConnectAsync(serverIP, serverPort);
+            stream = client.GetStream();
+            return true;
+        }
+        catch (SocketException)
+        {
+            client.Close();
+            return false;
+        }
     }
 
     public async Task<string?> SendMessage(string message)

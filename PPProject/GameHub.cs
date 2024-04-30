@@ -20,8 +20,9 @@ namespace LauncherApp
             UsernameLabel.Text = usr.Username;
             LevelNumberLabel.Text = usr.Level.ToString();
             user = usr;
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 12; i++)
                 FriendListPanel.Controls.Add(new FriendListItem());
+            InitControls();
             InitEvents();
         }
 
@@ -35,6 +36,17 @@ namespace LauncherApp
             PendingLabel.MouseLeave += FilterLabel_MouseLeave;
 
         }
+
+        private void InitControls()
+        {
+            //var scrollBar = new CustomvScrollBar();
+            //scrollBar.Dock = DockStyle.Right;
+            //FriendListContainerPanel.Controls.Add(scrollBar);
+
+            //FriendListContainerPanel.Controls.SetChildIndex(scrollBar, 0);
+
+        }
+
         private void splitter1_SplitterMoved(object sender, SplitterEventArgs e)
         {
 
