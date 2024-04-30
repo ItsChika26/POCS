@@ -17,6 +17,7 @@ namespace BaseServer
             _cts = new CancellationTokenSource();
             _listener = new TcpListener(IPAddress.Any, 8080);
             _listener.Start();
+            
             Console.WriteLine("Server started!");
             Task.Run(() => HandleMessages(_cts.Token));
         }
@@ -41,7 +42,7 @@ namespace BaseServer
 
             string responseMessage = ActionList.Actions[request.Action](request);
             var response = Encoding.UTF8.GetBytes(responseMessage);
-            await stream.WriteAsync(response, 0, response.Length);
+            stream.Write(response, 0, response.Length);
             await stream.FlushAsync();
             Console.WriteLine("Response sent: " + responseMessage);
         }

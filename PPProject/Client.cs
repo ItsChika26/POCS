@@ -46,7 +46,7 @@ public class Client
     public async Task<string?> ReceiveMessageAsync()
     {
         var responseBuffer = new byte[1024];
-        var responseLength = await stream.ReadAsync(responseBuffer, 0, responseBuffer.Length);
+        var responseLength = stream.Read(responseBuffer, 0, responseBuffer.Length);
         var response = Encoding.UTF8.GetString(responseBuffer, 0, responseLength);
         Debug.WriteLine("Response received: " + response);
         return response;
