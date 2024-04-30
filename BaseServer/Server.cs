@@ -11,7 +11,7 @@ namespace BaseServer
     {
         //TCP server
         private TcpListener Listener;
-        private const int BufferSize = 1024;
+        private const int BufferSize = 256;
 
         public volatile bool running = false;
 
@@ -35,19 +35,23 @@ namespace BaseServer
 
         private async Task HandleClient(TcpClient client)
         {
-            var stream = client.GetStream();
-            var buffer = new byte[BufferSize];
-            var bytesRead = await stream.ReadAsync(buffer, 0, BufferSize);
-
-            var data = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+            var buffer = new char[BufferSize];
+            int bytesRead = 0;
+            using (StreamReader stream = new StreamReader(client.GetStream())) { 
+                bytesRead = await stream.ReadAsync(buffer, 0, BufferSize);
+            }
+            var data = new string(buffer, 0, bytesRead);
             var request = JsonConvert.DeserializeObject<Request>(data);
             Console.WriteLine("Request received: " + request.Action);
 
+
             string responseMessage = ActionList.Actions[request.Action](request);
-                var response = Encoding.ASCII.GetBytes(responseMessage);
-            await stream.WriteAsync(response, 0, response.Length);
-            _ = stream.FlushAsync();
-                Console.WriteLine("Response sent: " + responseMessage);
+            var response = responseMessage.ToCharArray(); 
+            await using (StreamWriter stream = new StreamWriter(client.GetStream())){ 
+                await stream.WriteAsync(response, 0, response.Length); 
+                _ = stream.FlushAsync();
+            }
+            Console.WriteLine("Response sent: " + responseMessage);
         }
 
 

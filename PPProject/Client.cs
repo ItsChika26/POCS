@@ -39,18 +39,21 @@ public class Client
     {
         try
         {
-            var data = Encoding.ASCII.GetBytes(message);
-            if (!stream.DataAvailable)
+            var data = message.ToCharArray();
+            await using (StreamWriter writer = new StreamWriter(stream)){ 
+                await writer.WriteAsync(data, 0, data.Length);
+            }
+            Debug.WriteLine("Message sent: " + message);
+
+            await stream.FlushAsync();
+            var responsemessage = new char[256];
+            var response = string.Empty;
+            using (StreamReader reader = new StreamReader(stream))
             {
-                await stream.WriteAsync(data, 0, data.Length);
-                Debug.WriteLine("Message sent: " + message);
+                var bytes = await reader.ReadBlockAsync(responsemessage, 0, 256);
             }
 
-            stream.FlushAsync();
-            data = new byte[256];
-            var response = string.Empty;
-            var bytes = await stream.ReadAsync(data, 0, data.Length);
-            response = Encoding.ASCII.GetString(data, 0, bytes);
+            response = responsemessage.ToString();  
             Debug.WriteLine("Response received: " + response);
             return response;
         }
