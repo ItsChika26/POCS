@@ -7,12 +7,11 @@ namespace LauncherApp
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static async Task Main()
+        static void Main()
         {
-            //var client = Client.Instance;
-            //await client.Connect("20.215.40.53",8080);
+            
             ApplicationConfiguration.Initialize();
-            Application.Run(new GameHub(new User("Omar",50)));
+            Application.Run(new LoginForm());
         }
     }
 }

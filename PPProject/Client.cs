@@ -1,64 +1,55 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
 public class Client
 {
-
-    private static Client instance = null;
-    private static readonly object padlock = new object();
-     
+    private static Client? instance;
     private TcpClient client;
     private NetworkStream stream;
-    Client()
-    {
-    }
+    public Guid Id { get; }
+    public bool IsConnected => client.Connected;
 
     public static Client Instance
     {
-        get
-        {
-            lock (padlock)
-            {
-                if (instance == null)
-                {
-                    instance = new Client();
-                }
-                return instance;
-            }
-        }
+        get { return instance ??= new Client(); }
     }
 
-    public bool IsConnected()
+    private Client()
     {
-        return client == null ? false : client.Connected;
+        client = new TcpClient();
+        Id = Guid.NewGuid();
     }
-    public async Task<bool> Connect(string serverIP, int serverPort)
+
+    public async Task ConnectAsync(string serverIP, int serverPort)
     {
         try
         {
-            client = new TcpClient();
             await client.ConnectAsync(serverIP, serverPort);
+            Debug.WriteLine("Connected to server");
             stream = client.GetStream();
-            return true;
         }
-        catch (SocketException)
+        catch (Exception e)
         {
-            client.Close();
-            return false;
+            Debug.WriteLine(e);
         }
     }
 
-    public async Task<string?> SendMessage(string message)
+    public async Task Connect(string serverIP, int serverPort)
     {
-        var data = Encoding.ASCII.GetBytes(message);
-        await stream.WriteAsync(data, 0, data.Length);
+        client = new TcpClient();
+        await client.ConnectAsync(serverIP, serverPort);
+        stream = client.GetStream();
+    }
 
-        data = new byte[256];
-        var response = string.Empty;
-        var bytes = await stream.ReadAsync(data, 0, data.Length);
-        response = Encoding.ASCII.GetString(data, 0, bytes);
+    public async Task<string?> ReceiveMessageAsync()
+    {
+        var responseBuffer = new byte[1024];
+        var responseLength = stream.Read(responseBuffer, 0, responseBuffer.Length);
+        var response = Encoding.UTF8.GetString(responseBuffer, 0, responseLength);
+        Debug.WriteLine("Response received: " + response);
         return response;
     }
 
@@ -66,5 +57,6 @@ public class Client
     {
         stream.Close();
         client.Close();
+        Debug.WriteLine("Disconnected from server");
     }
 }
