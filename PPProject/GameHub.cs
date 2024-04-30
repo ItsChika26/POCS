@@ -72,6 +72,7 @@ namespace LauncherApp
             this.Hide();
             var form = new LoginForm();
             form.ShowDialog();
+            Client.Instance.Disconnect();
             this.Close();
         }
 
