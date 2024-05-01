@@ -33,6 +33,7 @@
             label_username = new Label();
             label_password = new Label();
             panel1 = new Panel();
+            Exit_button = new Button();
             rememberDetailsCheckbox = new CheckBox();
             textBox_user = new TextBox();
             Login_Title = new Label();
@@ -69,6 +70,7 @@
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(61, 44, 98);
+            panel1.Controls.Add(Exit_button);
             panel1.Controls.Add(rememberDetailsCheckbox);
             panel1.Controls.Add(textBox_user);
             panel1.Controls.Add(label_username);
@@ -82,6 +84,19 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(382, 353);
             panel1.TabIndex = 2;
+            // 
+            // Exit_button
+            // 
+            Exit_button.FlatAppearance.BorderSize = 0;
+            Exit_button.FlatStyle = FlatStyle.Flat;
+            Exit_button.ForeColor = Color.Coral;
+            Exit_button.Location = new Point(348, 3);
+            Exit_button.Name = "Exit_button";
+            Exit_button.Size = new Size(31, 29);
+            Exit_button.TabIndex = 3;
+            Exit_button.Text = "X";
+            Exit_button.UseVisualStyleBackColor = true;
+            Exit_button.Click += Exit_button_Click;
             // 
             // rememberDetailsCheckbox
             // 
@@ -171,7 +186,7 @@
             BackColor = Color.Navy;
             ClientSize = new Size(382, 353);
             Controls.Add(panel1);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.None;
             MaximizeBox = false;
             Name = "LoginForm";
             StartPosition = FormStartPosition.CenterScreen;
@@ -194,5 +209,6 @@
         private Label Login_Title;
         private ErrorProvider errorProvider_user;
         private CheckBox rememberDetailsCheckbox;
+        private Button Exit_button;
     }
 }
