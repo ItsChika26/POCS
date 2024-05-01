@@ -20,12 +20,21 @@ namespace LauncherApp
             UsernameLabel.Text = usr.Username;
             LevelNumberLabel.Text = usr.Level.ToString();
             user = usr;
-            for (int i = 0; i < 12; i++)
-                FriendListPanel.Controls.Add(new FriendListItem());
+
             InitControls();
             InitEvents();
+            LoadFriends();
         }
 
+        private void LoadFriends()
+        {
+            FriendListPanel.Controls.Clear();
+            foreach (var friend in User.Instance.friends)
+            {
+                var friendControl = new FriendListItem(friend);
+                FriendListPanel.Controls.Add(friendControl);
+            }
+        }
         private void InitEvents()
         {
             OnlineLabel.MouseEnter += FilterLabel_MouseEnter;
@@ -96,7 +105,7 @@ namespace LauncherApp
         private void AddFriendButton_Click(object sender, EventArgs e)
         {
             var addFriendControl = new AddFriendControl();
-            GamesPanel.Controls.Add(addFriendControl);
+            FriendListPanel.Controls.Add(addFriendControl);
         }
     }
 }

@@ -561,7 +561,6 @@
         private Button AddGameButton;
         private Panel panel10;
         private Panel panel9;
-        private FlowLayoutPanel FriendListPanel;
         private FileSystemWatcher fileSystemWatcher1;
         private Label label4;
         private Panel panel11;
@@ -572,5 +571,6 @@
         private Label label5;
         private Panel panel13;
         private Panel FriendListContainerPanel;
+        public FlowLayoutPanel FriendListPanel;
     }
 }

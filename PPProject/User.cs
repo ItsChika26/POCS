@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +32,8 @@ namespace LauncherApp
 
         public List<Game> games = new List<Game>();
 
-        List<Friend> friends = new List<Friend>();
+        public List<Friend> friends { get; set; } = new List<Friend>();
+
         public static User Instance
         {
             get

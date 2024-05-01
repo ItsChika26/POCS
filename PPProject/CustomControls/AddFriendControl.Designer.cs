@@ -34,6 +34,8 @@
             // 
             // textBox1
             // 
+            textBox1.BackColor = Color.FromArgb(42, 31, 61);
+            textBox1.ForeColor = SystemColors.ControlLightLight;
             textBox1.Location = new Point(8, 7);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(190, 27);

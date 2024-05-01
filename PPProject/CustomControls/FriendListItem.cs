@@ -12,9 +12,11 @@ namespace LauncherApp.CustomControls
 {
     public partial class FriendListItem : UserControl
     {
-        public FriendListItem()
+        public FriendListItem(Friend friend)
         {
             InitializeComponent();
+            UsernameLabel.Text = friend.Username;
+            LevelNumberLabel.Text = friend.Level.ToString();
         }
     }
 }

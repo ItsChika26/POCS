@@ -21,6 +21,7 @@ namespace LauncherApp
 
         }
 
+
         private async void button_login_Click(object sender, EventArgs e)
         {
             if (!client.IsConnected)
@@ -45,6 +46,7 @@ namespace LauncherApp
             if (response.Success) 
             {
                 User.Instance.LoadUser(username, response.Level);
+                LoadFriends();
                 this.Hide();
                 var form = new GameHub(User.Instance);
                 form.ShowDialog();
@@ -108,6 +110,15 @@ namespace LauncherApp
                 errorProvider_user.SetError(textBox_user, response.FailureMessage);
             }
             
+        }
+
+        private void LoadFriends()
+        {
+            var request = new Request { Username = User.Instance.Username, Action = "LoadFriends" };
+            var message = JsonConvert.SerializeObject(request);
+            client.SendMessageAsync(message);
+            var response = JsonConvert.DeserializeObject<Request>(client.ReceiveMessageAsync().Result);
+            User.Instance.UpdateFriends(response.friends);
         }
     }
 }
