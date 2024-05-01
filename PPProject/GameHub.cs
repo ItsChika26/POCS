@@ -104,7 +104,7 @@ namespace LauncherApp
 
         private void AddFriendButton_Click(object sender, EventArgs e)
         {
-            var addFriendControl = new AddFriendControl();
+            var addFriendControl = new AddFriendControl(this);
             FriendListPanel.Controls.Add(addFriendControl);
         }
     }

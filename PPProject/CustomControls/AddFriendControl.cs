@@ -5,8 +5,9 @@ namespace LauncherApp.CustomControls
     public partial class AddFriendControl : UserControl
     {
         GameHub parent;
-        public AddFriendControl()
+        public AddFriendControl(GameHub gameHub)
         {
+            parent = gameHub;
             InitializeComponent();
         }
 

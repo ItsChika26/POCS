@@ -44,14 +44,17 @@
             // 
             // button1
             // 
+            button1.BackColor = Color.FromArgb(4, 198, 202);
+            button1.BackgroundImage = Properties.Resources.Plus;
+            button1.BackgroundImageLayout = ImageLayout.Zoom;
             button1.FlatStyle = FlatStyle.Flat;
-            button1.ForeColor = Color.FromArgb(255, 128, 0);
+            button1.ForeColor = Color.White;
             button1.Location = new Point(204, 7);
             button1.Name = "button1";
+            button1.Padding = new Padding(5);
             button1.Size = new Size(27, 27);
             button1.TabIndex = 1;
-            button1.Text = "+";
-            button1.UseVisualStyleBackColor = true;
+            button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
             // 
             // AddFriendControl
