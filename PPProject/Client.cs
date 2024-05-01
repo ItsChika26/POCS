@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-public class Client
+public class Client : IDisposable
 {
     private static Client? instance;
     private TcpClient client;
@@ -37,12 +37,6 @@ public class Client
         }
     }
 
-    public async Task Connect(string serverIP, int serverPort)
-    {
-        client = new TcpClient();
-        await client.ConnectAsync(serverIP, serverPort);
-        stream = client.GetStream();
-    }
 
     public async Task SendMessageAsync(string message)
     {
@@ -54,7 +48,7 @@ public class Client
     public async Task<string?> ReceiveMessageAsync()
     {
         var responseBuffer = new byte[1024];
-        var responseLength = stream.Read(responseBuffer, 0, responseBuffer.Length);
+        var responseLength = await stream.ReadAsync(responseBuffer, 0, responseBuffer.Length);
         var response = Encoding.UTF8.GetString(responseBuffer, 0, responseLength);
         Debug.WriteLine("Response received: " + response);
         return response;
@@ -62,8 +56,14 @@ public class Client
 
     public void Disconnect()
     {
-        stream.Close();
-        client.Close();
+        Dispose();
         Debug.WriteLine("Disconnected from server");
+    }
+
+    public void Dispose()
+    {
+        client.Dispose();
+        stream.Dispose();
+        instance = null;
     }
 }

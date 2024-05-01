@@ -5,53 +5,66 @@ namespace LauncherApp
 {
     public partial class LoginForm : Form
     {
-        Client client = Client.Instance;
+        private const string LoginDetailsFilePath = "loginDetails.txt";
         public LoginForm()
         {
             InitializeComponent();
+            LoadLoginDetails();
         }
 
-        private void label_password_Click(object sender, EventArgs e)
+        private void LoadLoginDetails()
         {
-
-        }
-
-        private void label_username_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
-        private async void button_login_Click(object sender, EventArgs e)
-        {
-            if (!client.IsConnected)
-            { 
-                await client.ConnectAsync("20.215.40.53",8080);
-                if (!client.IsConnected)
+            if (File.Exists(LoginDetailsFilePath))
+            {
+                string[] lines = File.ReadAllLines(LoginDetailsFilePath);
+                if (lines.Length >= 2)
                 {
-                    MessageBox.Show("Server is not available");
-                    return;
+                    textBox_user.Text = lines[0];
+                    textBox_pass.Text = lines[1];
+                    rememberDetailsCheckbox.Checked = true;
                 }
             }
-            
+        }
+
+        private void SaveLoginDetails()
+        {
+            if (rememberDetailsCheckbox.Checked)
+            {
+                string username = textBox_user.Text;
+                string password = textBox_pass.Text;
+                File.WriteAllText(LoginDetailsFilePath, $"{username}\n{password}");
+            }
+            else
+            {
+                File.Delete(LoginDetailsFilePath);
+            }
+        }
+        private async void button_login_Click(object sender, EventArgs e)
+        {
+            if (!await ServerAvailable())
+            {
+                MessageBox.Show("Server is not available");
+                return;
+            }
             string username = textBox_user.Text;
             string password = textBox_pass.Text;
             errorProvider_user.Clear();
 
-            Request loginRequest = new() { Username = username, Password = password, Action = "Login"};
+            Request loginRequest = new() { Username = username, Password = password, Action = "Login" };
             string message = JsonConvert.SerializeObject(loginRequest);
-            await client.SendMessageAsync(message);
+            await Client.Instance.SendMessageAsync(message);
 
-            var response = JsonConvert.DeserializeObject<Request>(await client.ReceiveMessageAsync()) ;
-            if (response.Success) 
+            var response = JsonConvert.DeserializeObject<Request>(await Client.Instance.ReceiveMessageAsync());
+            if (response.Success)
             {
+                SaveLoginDetails();
                 User.Instance.LoadUser(username, response.Level);
-                LoadFriends();
+                await LoadFriends();
                 this.Hide();
-                var form = new GameHub(User.Instance);
+                var form = new GameHub();
                 form.ShowDialog();
-                this.Close();
-                //MessageBox.Show($"User {user.Username} with level {user.Level} logged in successfully");
+                this.Show();
+
             }
             else
             {
@@ -59,22 +72,31 @@ namespace LauncherApp
             }
         }
 
+        public async Task<bool> ServerAvailable()
+        {
+            if (!Client.Instance.IsConnected)
+            {
+                await Client.Instance.ConnectAsync("20.215.40.53", 8080);
+                if (!Client.Instance.IsConnected)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private async void button_register_Click(object sender, EventArgs e)
         {
-            if (!client.IsConnected)
-            { 
-                await client.ConnectAsync("20.215.40.53",8080);
-                if (!client.IsConnected)
-                {
-                    MessageBox.Show("Server is not available");
-                    return;
-                }
+            if (!await ServerAvailable())
+            {
+                MessageBox.Show("Server is not available");
+                return;
             }
             string username = textBox_user.Text;
             string password = textBox_pass.Text;
 
             errorProvider_user.Clear();
-          
+
             if (username.Length > 25 || username.Length < 4)
             {
                 errorProvider_user.SetError(textBox_user, "Username must be between 4 and 25 characters long");
@@ -96,12 +118,12 @@ namespace LauncherApp
                 return;
             }
 
-            Request registerRequest = new() { Username = username, Password = password,Action = "Register"};
+            Request registerRequest = new() { Username = username, Password = password, Action = "Register" };
             var message = JsonConvert.SerializeObject(registerRequest);
-            await client.SendMessageAsync(message);
-            var response = JsonConvert.DeserializeObject<Request>(await client.ReceiveMessageAsync());
+            await Client.Instance.SendMessageAsync(message);
+            var response = JsonConvert.DeserializeObject<Request>(await Client.Instance.ReceiveMessageAsync());
 
-            if(response.Success)
+            if (response.Success)
             {
                 MessageBox.Show("User registered successfully");
             }
@@ -109,16 +131,17 @@ namespace LauncherApp
             {
                 errorProvider_user.SetError(textBox_user, response.FailureMessage);
             }
-            
+
         }
 
-        private void LoadFriends()
+        private async Task LoadFriends()
         {
             var request = new Request { Username = User.Instance.Username, Action = "LoadFriends" };
             var message = JsonConvert.SerializeObject(request);
-            client.SendMessageAsync(message);
-            var response = JsonConvert.DeserializeObject<Request>(client.ReceiveMessageAsync().Result);
+            Client.Instance.SendMessageAsync(message);
+            var response = JsonConvert.DeserializeObject<Request>(await Client.Instance.ReceiveMessageAsync());
             User.Instance.UpdateFriends(response.friends);
         }
+
     }
 }

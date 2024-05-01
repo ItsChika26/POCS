@@ -33,8 +33,9 @@
             label_username = new Label();
             label_password = new Label();
             panel1 = new Panel();
+            rememberDetailsCheckbox = new CheckBox();
             textBox_user = new TextBox();
-            label_title = new Label();
+            Login_Title = new Label();
             button_register = new Button();
             button_login = new Button();
             textBox_pass = new TextBox();
@@ -53,7 +54,6 @@
             label_username.Size = new Size(112, 24);
             label_username.TabIndex = 0;
             label_username.Text = "Username:";
-            label_username.Click += label_username_Click;
             // 
             // label_password
             // 
@@ -65,14 +65,14 @@
             label_password.Size = new Size(110, 24);
             label_password.TabIndex = 1;
             label_password.Text = "Password:";
-            label_password.Click += label_password_Click;
             // 
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(61, 44, 98);
+            panel1.Controls.Add(rememberDetailsCheckbox);
             panel1.Controls.Add(textBox_user);
             panel1.Controls.Add(label_username);
-            panel1.Controls.Add(label_title);
+            panel1.Controls.Add(Login_Title);
             panel1.Controls.Add(button_register);
             panel1.Controls.Add(button_login);
             panel1.Controls.Add(textBox_pass);
@@ -82,6 +82,17 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(382, 353);
             panel1.TabIndex = 2;
+            // 
+            // rememberDetailsCheckbox
+            // 
+            rememberDetailsCheckbox.AutoSize = true;
+            rememberDetailsCheckbox.Font = new Font("FreeSans", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rememberDetailsCheckbox.Location = new Point(111, 317);
+            rememberDetailsCheckbox.Name = "rememberDetailsCheckbox";
+            rememberDetailsCheckbox.Size = new Size(159, 23);
+            rememberDetailsCheckbox.TabIndex = 7;
+            rememberDetailsCheckbox.Text = "Remember Details?";
+            rememberDetailsCheckbox.UseVisualStyleBackColor = true;
             // 
             // textBox_user
             // 
@@ -93,16 +104,16 @@
             textBox_user.Size = new Size(205, 34);
             textBox_user.TabIndex = 2;
             // 
-            // label_title
+            // Login_Title
             // 
-            label_title.AutoSize = true;
-            label_title.Font = new Font("Arial", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 162);
-            label_title.ForeColor = Color.FromArgb(255, 128, 0);
-            label_title.Location = new Point(94, 39);
-            label_title.Name = "label_title";
-            label_title.Size = new Size(178, 51);
-            label_title.TabIndex = 6;
-            label_title.Text = "POCHS";
+            Login_Title.AutoSize = true;
+            Login_Title.Font = new Font("Gang of Three", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            Login_Title.ForeColor = Color.FromArgb(255, 128, 0);
+            Login_Title.Location = new Point(27, 39);
+            Login_Title.Name = "Login_Title";
+            Login_Title.Size = new Size(331, 49);
+            Login_Title.TabIndex = 6;
+            Login_Title.Text = "POX Launcher";
             // 
             // button_register
             // 
@@ -180,7 +191,8 @@
         private Button button_login;
         private TextBox textBox_pass;
         private TextBox textBox_user;
-        private Label label_title;
+        private Label Login_Title;
         private ErrorProvider errorProvider_user;
+        private CheckBox rememberDetailsCheckbox;
     }
 }

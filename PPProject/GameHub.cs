@@ -13,14 +13,12 @@ namespace LauncherApp
 {
     public partial class GameHub : Form
     {
-        private User user;
-        public GameHub(User usr)
+        public User usr = User.Instance;
+        public GameHub()
         {
             InitializeComponent();
             UsernameLabel.Text = usr.Username;
             LevelNumberLabel.Text = usr.Level.ToString();
-            user = usr;
-
             InitControls();
             InitEvents();
             LoadFriends();
@@ -79,8 +77,6 @@ namespace LauncherApp
         private void LogoutButton_Click(object sender, EventArgs e)
         {
             this.Hide();
-            var form = new LoginForm();
-            form.ShowDialog();
             Client.Instance.Disconnect();
             this.Close();
         }
