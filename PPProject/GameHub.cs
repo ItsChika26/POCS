@@ -46,6 +46,12 @@ namespace LauncherApp
 
         private void InitControls()
         {
+            for (int i = 0; i < 10; i++)
+            {
+                var gameControl = new GameControl();
+               
+                GameListPanel.Controls.Add(gameControl);
+            }
             //var scrollBar = new CustomvScrollBar();
             //scrollBar.Dock = DockStyle.Right;
             //FriendListContainerPanel.Controls.Add(scrollBar);
