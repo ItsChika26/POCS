@@ -53,11 +53,7 @@ namespace LauncherApp
                 GameListPanel.Controls.Add(gameControl);
             }
 
-            for (int i = 0; i < 10; i++)
-            {
-                var friendControl = new FriendListItem(new Friend("hamoudigamer",5,true,false));
-               FriendListPanel.Controls.Add(friendControl);
-            }
+          
             //var scrollBar = new CustomvScrollBar();
             //scrollBar.Dock = DockStyle.Right;
             //FriendListContainerPanel.Controls.Add(scrollBar);
