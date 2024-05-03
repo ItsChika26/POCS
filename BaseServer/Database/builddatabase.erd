@@ -4,13 +4,13 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -19.7157,
-    "scrollLeft": -11.4051,
+    "scrollTop": 0,
+    "scrollLeft": -4.8888,
     "zoomLevel": 1,
     "show": 431,
     "database": 4,
     "databaseName": "",
-    "canvasType": "@dineug/erd-editor/builtin-schema-sql",
+    "canvasType": "ERD",
     "language": 1,
     "tableNameCase": 4,
     "columnNameCase": 2,
@@ -56,7 +56,6 @@
         "name": "Relationships",
         "comment": "",
         "columnIds": [
-          "3Ep6-qtipAU0UngQG4WeP",
           "IePJuwwrF2cqpSjRNbW-O",
           "mj7d86cgEMKaE0iH835qH",
           "SRVCgvX12Y_S5ZSzfQwqr",
@@ -80,7 +79,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1714514715303,
+          "updateAt": 1714673829416,
           "createAt": 1714513088803
         }
       },
@@ -555,18 +554,18 @@
         "tableId": "gonfYIxYaZVR6j5KT1kUM",
         "name": "Icon",
         "comment": "",
-        "dataType": "BLOB",
+        "dataType": "VARBINARY(MAX)",
         "default": "",
         "options": 0,
         "ui": {
           "keys": 0,
           "widthName": 60,
           "widthComment": 60,
-          "widthDataType": 60,
+          "widthDataType": 97,
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1714514127024,
+          "updateAt": 1714674117343,
           "createAt": 1714514117312
         }
       },
@@ -852,7 +851,7 @@
             "IePJuwwrF2cqpSjRNbW-O"
           ],
           "x": 950,
-          "y": 301,
+          "y": 295,
           "direction": 1
         },
         "meta": {
@@ -880,7 +879,7 @@
             "mj7d86cgEMKaE0iH835qH"
           ],
           "x": 950,
-          "y": 389,
+          "y": 371,
           "direction": 1
         },
         "meta": {
@@ -898,7 +897,7 @@
           "columnIds": [
             "N5GrCO77oSA5a8CNYL1SX"
           ],
-          "x": 226,
+          "x": 234,
           "y": 173,
           "direction": 8
         },
@@ -1017,7 +1016,7 @@
     "3Ep6-qtipAU0UngQG4WeP": [
       "tableColumnEntities",
       1714513333556,
-      -1,
+      1714673829415,
       {
         "name": 1714513339771,
         "dataType": 1714513344642,
@@ -1200,7 +1199,7 @@
       -1,
       {
         "name": 1714514122834,
-        "dataType": 1714514127022
+        "dataType": 1714674117342
       }
     ],
     "WLv-BB3RFdLgAOXxZbgOI": [
