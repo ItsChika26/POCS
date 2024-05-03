@@ -11,7 +11,7 @@ namespace LauncherApp
         {
             
             ApplicationConfiguration.Initialize();
-            Application.Run(new GameHub());
+            Application.Run(new LoginForm());
         }
     }
 }

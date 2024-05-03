@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
@@ -77,12 +78,13 @@ namespace LauncherApp
         {
             if (!Client.Instance.IsConnected)
             {
-                await Client.Instance.ConnectAsync("20.215.40.53", 8080);
+                await Client.Instance.ConnectAsync("10.7.0.214", 8080);
                 if (!Client.Instance.IsConnected)
                 {
                     return false;
                 }
             }
+            Debug.WriteLine("Server is available");
             return true;
         }
 
