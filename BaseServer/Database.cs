@@ -8,7 +8,7 @@ namespace BaseServer
     internal static class Database
     {
         private static string ConnectionString =
-            "Server=localhost;Database=master;Trusted_Connection=True;TrustServerCertificate=True";
+            "Data Source=DAYOLAPTOP\\POCS;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
 
         public static Friend? GetFriend(string username, bool pending)
         {
