@@ -57,8 +57,8 @@
             label1 = new Label();
             GamesPanel = new Panel();
             panel8 = new Panel();
+            GameListPanel = new FlowLayoutPanel();
             label4 = new Label();
-            panel9 = new Panel();
             panel10 = new Panel();
             DeleteGameButton = new Button();
             AddGameButton = new Button();
@@ -408,8 +408,8 @@
             // panel8
             // 
             panel8.BackColor = Color.FromArgb(60, 44, 98);
+            panel8.Controls.Add(GameListPanel);
             panel8.Controls.Add(label4);
-            panel8.Controls.Add(panel9);
             panel8.Controls.Add(panel10);
             panel8.Controls.Add(DeleteGameButton);
             panel8.Controls.Add(AddGameButton);
@@ -419,6 +419,17 @@
             panel8.Padding = new Padding(5);
             panel8.Size = new Size(562, 628);
             panel8.TabIndex = 3;
+            // 
+            // GameListPanel
+            // 
+            GameListPanel.AutoSize = true;
+            GameListPanel.BackColor = Color.FromArgb(42, 31, 61);
+            GameListPanel.FlowDirection = FlowDirection.TopDown;
+            GameListPanel.Location = new Point(8, 151);
+            GameListPanel.Name = "GameListPanel";
+            GameListPanel.Padding = new Padding(5);
+            GameListPanel.Size = new Size(544, 469);
+            GameListPanel.TabIndex = 13;
             // 
             // label4
             // 
@@ -431,15 +442,6 @@
             label4.Size = new Size(138, 50);
             label4.TabIndex = 12;
             label4.Text = "Games";
-            // 
-            // panel9
-            // 
-            panel9.BackColor = Color.FromArgb(42, 31, 61);
-            panel9.Location = new Point(8, 151);
-            panel9.Name = "panel9";
-            panel9.Size = new Size(546, 469);
-            panel9.TabIndex = 11;
-            panel9.Paint += panel9_Paint;
             // 
             // panel10
             // 
@@ -560,7 +562,6 @@
         private Button DeleteGameButton;
         private Button AddGameButton;
         private Panel panel10;
-        private Panel panel9;
         private FileSystemWatcher fileSystemWatcher1;
         private Label label4;
         private Panel panel11;
@@ -572,5 +573,6 @@
         private Panel panel13;
         private Panel FriendListContainerPanel;
         public FlowLayoutPanel FriendListPanel;
+        public FlowLayoutPanel GameListPanel;
     }
 }

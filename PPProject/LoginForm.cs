@@ -10,6 +10,7 @@ namespace LauncherApp
         {
             InitializeComponent();
             LoadLoginDetails();
+            InitEvents();
         }
 
         private void LoadLoginDetails()
@@ -146,6 +147,39 @@ namespace LauncherApp
         private void Exit_button_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void Login_Title_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Login_Title_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void menuButton_MouseEnter(object sender, EventArgs e)
+        {
+            ((Button)sender).ForeColor = Color.Orange;
+        }
+
+        private void menuButton_MouseLeave(object sender, EventArgs e)
+        {
+            ((Button)sender).ForeColor = Color.White;
+        }
+
+        private void InitEvents()
+        {
+            MinimizeButton.MouseEnter += menuButton_MouseEnter;
+            MinimizeButton.MouseLeave += menuButton_MouseLeave;
+            Exit_button.MouseEnter += menuButton_MouseEnter;
+            Exit_button.MouseLeave += menuButton_MouseLeave;
+        }
+
+        private void MinimizeButton_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
     }
 }
