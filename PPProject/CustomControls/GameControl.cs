@@ -15,6 +15,12 @@ namespace LauncherApp.CustomControls
         public GameControl()
         {
             InitializeComponent();
+            InitEvents();
+        
+        }
+
+        public void InitEvents()
+        {
             MouseEnter += GameControl_MouseEnter;
             MouseLeave += GameControl_MouseLeave;
             foreach (Control control in Controls)
@@ -23,6 +29,7 @@ namespace LauncherApp.CustomControls
                 control.MouseLeave += GameControl_MouseLeave;
             }
         }
+
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {

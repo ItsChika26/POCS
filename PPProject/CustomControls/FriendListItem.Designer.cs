@@ -77,7 +77,7 @@
             LevelNumberLabel.BackColor = Color.FromArgb(60, 44, 98);
             LevelNumberLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
             LevelNumberLabel.ForeColor = Color.FromArgb(255, 128, 0);
-            LevelNumberLabel.Location = new Point(92, 25);
+            LevelNumberLabel.Location = new Point(90, 25);
             LevelNumberLabel.Name = "LevelNumberLabel";
             LevelNumberLabel.Size = new Size(17, 20);
             LevelNumberLabel.TabIndex = 5;
@@ -100,6 +100,8 @@
             Name = "FriendListItem";
             Padding = new Padding(2);
             Size = new Size(239, 50);
+            MouseEnter += FriendListItem_MouseEnter;
+            MouseLeave += FriendListItem_MouseLeave;
             ((System.ComponentModel.ISupportInitialize)ProfilePicture).EndInit();
             ((System.ComponentModel.ISupportInitialize)fileSystemWatcher1).EndInit();
             ResumeLayout(false);
