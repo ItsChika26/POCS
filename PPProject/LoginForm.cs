@@ -78,7 +78,7 @@ namespace LauncherApp
         {
             if (!Client.Instance.IsConnected)
             {
-                await Client.Instance.ConnectAsync("10.7.0.214", 8080);
+                await Client.Instance.ConnectAsync("192.168.137.214", 8080);
                 if (!Client.Instance.IsConnected)
                 {
                     return false;
