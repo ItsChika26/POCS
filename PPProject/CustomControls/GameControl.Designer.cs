@@ -120,6 +120,7 @@
             Name = "GameControl";
             Padding = new Padding(5);
             Size = new Size(455, 157);
+            MouseDoubleClick += GameControl_MouseDoubleClick;
             MouseEnter += GameControl_MouseEnter;
             MouseLeave += GameControl_MouseLeave;
             ((System.ComponentModel.ISupportInitialize)GameIcon).EndInit();

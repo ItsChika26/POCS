@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace LauncherApp
 {
@@ -20,7 +21,6 @@ namespace LauncherApp
             UsernameLabel.Text = usr.Username;
             LevelNumberLabel.Text = usr.Level.ToString();
             InitControls();
-            InitEvents();
             LoadFriends();
         }
 
@@ -33,27 +33,17 @@ namespace LauncherApp
                 FriendListPanel.Controls.Add(friendControl);
             }
         }
-        private void InitEvents()
-        {
-            OnlineLabel.MouseEnter += FilterLabel_MouseEnter;
-            OnlineLabel.MouseLeave += FilterLabel_MouseLeave;
-            AllLabel.MouseEnter += FilterLabel_MouseEnter;
-            AllLabel.MouseLeave += FilterLabel_MouseLeave;
-            PendingLabel.MouseEnter += FilterLabel_MouseEnter;
-            PendingLabel.MouseLeave += FilterLabel_MouseLeave;
-
-        }
 
         private void InitControls()
         {
             for (int i = 0; i < 10; i++)
             {
                 var gameControl = new GameControl();
-               
+
                 GameListPanel.Controls.Add(gameControl);
             }
 
-          
+
             //var scrollBar = new CustomvScrollBar();
             //scrollBar.Dock = DockStyle.Right;
             //FriendListContainerPanel.Controls.Add(scrollBar);
@@ -62,37 +52,16 @@ namespace LauncherApp
 
         }
 
-        private void splitter1_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-
-        }
-
-        private void roundedPicture1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void FriendsPanel_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void panel9_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void LogoutButton_Click(object sender, EventArgs e)
+        private async void LogoutButton_Click(object sender, EventArgs e)
         {
             this.Hide();
+            var request = new Request() { Action = "Logout", Username = User.Instance.Username };
+            var message = JsonConvert.SerializeObject(request);
+            await Client.Instance.SendMessageAsync(message);
             Client.Instance.Disconnect();
             this.Close();
         }
 
-        private void LevelNumberLabel_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void FilterLabel_MouseEnter(object sender, EventArgs e)
         {

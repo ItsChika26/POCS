@@ -99,7 +99,6 @@
             roundedPicture1.SizeMode = PictureBoxSizeMode.StretchImage;
             roundedPicture1.TabIndex = 1;
             roundedPicture1.TabStop = false;
-            roundedPicture1.Click += roundedPicture1_Click;
             // 
             // panel7
             // 
@@ -218,7 +217,6 @@
             LevelNumberLabel.Size = new Size(24, 32);
             LevelNumberLabel.TabIndex = 5;
             LevelNumberLabel.Text = "1";
-            LevelNumberLabel.Click += LevelNumberLabel_Click;
             // 
             // LevelProgressBar
             // 
@@ -278,7 +276,6 @@
             FriendsPanel.Padding = new Padding(5);
             FriendsPanel.Size = new Size(300, 628);
             FriendsPanel.TabIndex = 1;
-            FriendsPanel.Paint += FriendsPanel_Paint;
             // 
             // FriendListContainerPanel
             // 
@@ -338,6 +335,8 @@
             PendingLabel.Size = new Size(87, 28);
             PendingLabel.TabIndex = 2;
             PendingLabel.Text = "Pending";
+            PendingLabel.MouseEnter += FilterLabel_MouseEnter;
+            PendingLabel.MouseLeave += FilterLabel_MouseLeave;
             // 
             // AllLabel
             // 
@@ -351,6 +350,8 @@
             AllLabel.Size = new Size(61, 28);
             AllLabel.TabIndex = 1;
             AllLabel.Text = "All   /";
+            AllLabel.MouseEnter += FilterLabel_MouseEnter;
+            AllLabel.MouseLeave += FilterLabel_MouseLeave;
             // 
             // OnlineLabel
             // 
@@ -364,6 +365,8 @@
             OnlineLabel.Size = new Size(98, 28);
             OnlineLabel.TabIndex = 0;
             OnlineLabel.Text = "Online   /";
+            OnlineLabel.MouseEnter += FilterLabel_MouseEnter;
+            OnlineLabel.MouseLeave += FilterLabel_MouseLeave;
             // 
             // panel2
             // 

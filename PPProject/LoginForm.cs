@@ -78,7 +78,7 @@ namespace LauncherApp
         {
             if (!Client.Instance.IsConnected)
             {
-                await Client.Instance.ConnectAsync("192.168.137.214", 8080);
+                await Client.Instance.ConnectAsync("localhost", 8080);
                 if (!Client.Instance.IsConnected)
                 {
                     return false;
@@ -105,16 +105,16 @@ namespace LauncherApp
                 errorProvider_user.SetError(textBox_user, "Username must be between 4 and 25 characters long");
                 return;
             }
-            if (password.Length < 8 || password.Length > 25)
-            {
-                errorProvider_user.SetError(textBox_pass, "Password must be at least 8 characters long");
-                return;
-            }
-            if (!password.Any(char.IsDigit))
-            {
-                errorProvider_user.SetError(textBox_pass, "Password must contain at least one digit");
-                return;
-            }
+            //if (password.Length < 8 || password.Length > 25)
+            //{
+            //    errorProvider_user.SetError(textBox_pass, "Password must be at least 8 characters long");
+            //    return;
+            //}
+            //if (!password.Any(char.IsDigit))
+            //{
+            //    errorProvider_user.SetError(textBox_pass, "Password must contain at least one digit");
+            //    return;
+            //}
             if (!password.Any(char.IsUpper))
             {
                 errorProvider_user.SetError(textBox_pass, "Password must contain at least one uppercase letter");

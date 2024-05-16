@@ -1,14 +1,14 @@
 ﻿using LauncherApp;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace BaseServer
 {
     internal static class Database
     {
+        
         private static string ConnectionString =
-            "Data Source=localhost; catalog=master;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
+            "Data Source=DAYOLAPTOP\\POCS;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
 
         public static Friend? GetFriend(string username, bool pending)
         {
@@ -25,7 +25,11 @@ namespace BaseServer
             {
                 if (reader.Read())
                 {
-                    return new Friend(reader.GetString(0),reader.GetInt32(1),reader.GetBoolean(2),pending);
+                    var friend_name = reader.GetString(0);
+                    var level = reader.GetInt32(1);
+                    var online = reader.GetBoolean(2);
+                    var friend = new Friend(friend_name, level, online, pending);
+                    return friend;
                 }
             }
             return null;
@@ -61,6 +65,27 @@ namespace BaseServer
             return JsonConvert.SerializeObject(new Request(){Success = true});
         }
 
+        public static string UpdateOnlineStatus(string username, bool status)
+        {
+            using SqlConnection Connection = new SqlConnection(ConnectionString);
+            try
+            {
+                Connection.Open();
+            }
+            catch (Exception e) { Console.WriteLine(e); }
+            string queryString = "UPDATE dbo.[Users] SET Online = @online WHERE username = @username;";
+            SqlCommand command = new SqlCommand(queryString, Connection);
+            command.Parameters.AddWithValue("@username", username);
+            command.Parameters.AddWithValue("@online", status);
+            command.ExecuteNonQuery();
+            return JsonConvert.SerializeObject(new Request(){Success = true});
+        }
+        public static string Logout(Request request)
+        {
+            UpdateOnlineStatus(request.Username, false);
+            return JsonConvert.SerializeObject(new Request(){Success = true});
+        }
+
         public static string LoginUser(Request request)
         {
             using SqlConnection Connection = new SqlConnection(ConnectionString);
@@ -68,7 +93,7 @@ namespace BaseServer
                 Connection.Open();
             }
             catch(Exception e) { Console.WriteLine(e); }
-            string queryString = "SELECT username, level FROM dbo.[Users] where username = @username and password = @password;";
+            string queryString = "SELECT username, level,Online FROM dbo.[Users] where username = @username and password = @password;";
 
             SqlCommand command = new SqlCommand(queryString, Connection);
             command.Parameters.AddWithValue("@username", request.Username);
@@ -77,20 +102,13 @@ namespace BaseServer
             {
                 if (reader.Read())
                 {
+                    if (reader.GetBoolean(2))
+                        return JsonConvert.SerializeObject(new Request(){Success = false, FailureMessage = "User already logged in"});
+                    UpdateOnlineStatus(request.Username, true);
                     return JsonConvert.SerializeObject(new Request(){Username = request.Username,Level = reader.GetInt32(1),Success = true});
                 }
             }
             return JsonConvert.SerializeObject(new Request(){Success = false, FailureMessage = "Invalid username or password"});
-        }
-
-        public static void UpdateUserLevel(User user)
-        {
-
-        }
-
-        public static void UpdateUserGames(User user)
-        {
-
         }
         
         public static string LoadFriends(Request request)
@@ -138,7 +156,7 @@ namespace BaseServer
             }
             catch (Exception e) { Console.WriteLine(e); }
 
-            string queryString = "SELECT username, pending FROM dbo.[Relationships] WHERE (user1 = @user1 AND user2 = @user2) OR (user1 = @user2 AND user2 = @user1);";
+            string queryString = "SELECT pending FROM dbo.[Relationships] WHERE (user1 = @user1 AND user2 = @user2) OR (user1 = @user2 AND user2 = @user1);";
             SqlCommand selectCommand = new SqlCommand(queryString, Connection);
             selectCommand.Parameters.AddWithValue("@user1", request.Username);
             selectCommand.Parameters.AddWithValue("@user2", request.FriendUsername);
@@ -147,7 +165,7 @@ namespace BaseServer
             {
                 if (reader.Read())
                 {
-                    bool pending = reader.GetBoolean(1);
+                    bool pending = reader.GetBoolean(0);
                     if (pending)
                     {
                         string updateQueryString = "UPDATE dbo.[Relationships] SET pending = @pending WHERE (user1 = @user1 AND user2 = @user2) OR (user1 = @user2 AND user2 = @user1);";
@@ -169,7 +187,7 @@ namespace BaseServer
             SqlCommand insertCommand = new SqlCommand(insertQueryString, Connection);
             insertCommand.Parameters.AddWithValue("@user1", request.Username);
             insertCommand.Parameters.AddWithValue("@user2", request.FriendUsername);
-            insertCommand.Parameters.AddWithValue("@pending", true);
+            insertCommand.Parameters.AddWithValue("@pending", 1);
             insertCommand.Parameters.AddWithValue("@date", DateTime.Now);
 
             insertCommand.ExecuteNonQuery();

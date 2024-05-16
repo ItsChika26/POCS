@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Diagnostics;
+using System.Security;
+
 
 namespace LauncherApp.CustomControls
 {
     public partial class GameControl : UserControl
     {
+        string GameDirectory { get; set; }
         public GameControl()
         {
             InitializeComponent();
             InitEvents();
-        
+
         }
 
         public void InitEvents()
@@ -27,13 +22,8 @@ namespace LauncherApp.CustomControls
             {
                 control.MouseEnter += GameControl_MouseEnter;
                 control.MouseLeave += GameControl_MouseLeave;
+                control.MouseDoubleClick += GameControl_MouseDoubleClick;
             }
-        }
-
-
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private Color borderColor;
@@ -55,8 +45,10 @@ namespace LauncherApp.CustomControls
             using (Pen borderPen = new Pen(borderColor))
             {
                 e.Graphics.DrawRectangle(borderPen, new Rectangle
-                { Location=ClientRectangle.Location
-                , Size = new Size(ClientRectangle.Width - 1, ClientRectangle.Height - 1)
+                {
+                    Location = ClientRectangle.Location
+                ,
+                    Size = new Size(ClientRectangle.Width - 1, ClientRectangle.Height - 1)
                 });
             }
         }
@@ -69,6 +61,13 @@ namespace LauncherApp.CustomControls
         private void GameControl_MouseEnter(object sender, EventArgs e)
         {
             BorderColor = Color.Orange;
+        }
+
+        private void GameControl_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            
+            Process.Start("LauncherApp.exe");
+
         }
     }
 }

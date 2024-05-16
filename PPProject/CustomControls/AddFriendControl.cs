@@ -16,17 +16,17 @@ namespace LauncherApp.CustomControls
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             var request = new Request { Username = User.Instance.Username,FriendUsername = textBox1.Text, Action = "AddFriend" };
             var message = JsonConvert.SerializeObject(request);
             Client.Instance.SendMessageAsync(message);
-            var response = JsonConvert.DeserializeObject<Request>(Client.Instance.ReceiveMessageAsync().Result);
+            var response = JsonConvert.DeserializeObject<Request>(await Client.Instance.ReceiveMessageAsync());
             if (response.Success)
             {
                 var load = JsonConvert.SerializeObject(new Request { Username = User.Instance.Username, Action = "LoadFriends" } );
                 Client.Instance.SendMessageAsync(load);
-                response = JsonConvert.DeserializeObject<Request>(Client.Instance.ReceiveMessageAsync().Result);
+                response = JsonConvert.DeserializeObject<Request>(await Client.Instance.ReceiveMessageAsync());
 
                 User.Instance.UpdateFriends(response.friends);
                 parent.FriendListPanel.Controls.Clear();
