@@ -165,14 +165,14 @@ namespace BaseServer
             {
                 if (reader.Read())
                 {
-                    bool pending = reader.GetBoolean(0);
+                    bool pending = reader.GetBoolean(1);
                     if (pending)
                     {
                         string updateQueryString = "UPDATE dbo.[Relationships] SET pending = @pending WHERE (user1 = @user1 AND user2 = @user2) OR (user1 = @user2 AND user2 = @user1);";
                         SqlCommand updateCommand = new SqlCommand(updateQueryString, Connection);
                         updateCommand.Parameters.AddWithValue("@user1", request.Username);
                         updateCommand.Parameters.AddWithValue("@user2", request.FriendUsername);
-                        updateCommand.Parameters.AddWithValue("@pending", false);
+                        updateCommand.Parameters.AddWithValue("@pending", 0);
                         updateCommand.ExecuteNonQuery();
                         return LoadFriends(request);
                     }
