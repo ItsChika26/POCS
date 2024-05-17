@@ -1,5 +1,6 @@
 ﻿using LauncherApp.CustomControls;
 using Newtonsoft.Json;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 using Timer = System.Threading.Timer;
 
@@ -180,8 +181,8 @@ namespace LauncherApp
                     string filePath = openFileDialog.FileName;
                     if (new FileInfo(filePath).Length <= 2 * 1024 * 1024) // Check if file size is less than 2MB
                     {
-                        BinaryData binaryData = new(File.ReadAllBytes(filePath));
-                        var request = new Request() { Action = "UpdateIcon", Username = User.Instance.Username, Image = binaryData };
+                        var image = Utils.BytesFromBitmap((Bitmap)Image.FromFile(filePath),ImageFormat.Png);
+                        var request = new Request() { Action = "UpdateIcon", Username = User.Instance.Username, Image = image };
                         var message = JsonConvert.SerializeObject(request);
                         _ = Client.Instance.SendMessageAsync(message);
                         var response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())!);
