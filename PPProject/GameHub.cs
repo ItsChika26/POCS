@@ -19,6 +19,7 @@ namespace LauncherApp
             InitializeComponent();
             UsernameLabel.Text = usr.Username;
             LevelNumberLabel.Text = usr.Level.ToString();
+            roundedPicture1.Image = usr.Image;
             InitControls();
             SelectedFriendDisplay = AllLabel;
             Connected = true;
@@ -66,7 +67,7 @@ namespace LauncherApp
                     FriendListPanel.Controls.Add(friendControl);
                 }
 
-                for(int i = 0; i < 30; i++)
+                for (int i = 0; i < 30; i++)
                 {
                     FriendListPanel.Controls.Add(new FriendListItem(User.Instance.friends[0]));
                 }
@@ -165,6 +166,34 @@ namespace LauncherApp
             AddingFriends = true;
             FriendListPanel.Controls.Add(addFriendControl);
             FriendListPanel.Controls.SetChildIndex(addFriendControl, 0);
+        }
+
+        private async void roundedPicture1_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "PNG Files (*.png)|*.png";
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = openFileDialog.FileName;
+                    if (new FileInfo(filePath).Length <= 2 * 1024 * 1024) // Check if file size is less than 2MB
+                    {
+                        BinaryData binaryData = new(File.ReadAllBytes(filePath));
+                        var request = new Request() { Action = "UpdateIcon", Username = User.Instance.Username, Image = binaryData };
+                        var message = JsonConvert.SerializeObject(request);
+                        _ = Client.Instance.SendMessageAsync(message);
+                        var response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())!);
+                        MessageBox.Show(response!.Success ? "Icon updated successfully" : response.FailureMessage);
+                        roundedPicture1.Image = Image.FromFile(filePath);
+                    }
+                    else
+                    {
+                        MessageBox.Show(@"The selected image exceeds the maximum file size limit of 2MB.");
+                    }
+                }
+            }
         }
     }
 }

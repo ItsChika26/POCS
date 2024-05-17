@@ -67,3 +67,4 @@ CREATE TABLE Users_Games
   FOREIGN KEY (Username)
   REFERENCES Users (Username)
 );
+

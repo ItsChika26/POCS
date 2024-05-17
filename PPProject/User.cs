@@ -1,16 +1,21 @@
-﻿namespace LauncherApp
+﻿using LauncherApp.Properties;
+
+namespace LauncherApp
 {
 
     public class Player
     {
+        public Image? Image { get; set; }
         public string Username { get; set; }
         public int Level { get; set; }
 
 
-        public Player(string username, int level)
+        public Player(string username, int level, Bitmap? image= null)
         {
+
             Username = username;
             Level = level;
+            Image = image ?? Resources.c0589be1b84c602dae8e97419541708d;
         }
 
         public void LevelUp()
@@ -38,7 +43,7 @@
         {
         }
 
-        public void LoadUser(string username, int level)
+        public void LoadUser(string username, int level, Bitmap? image = null)
         {
             user = new User(username, level);
         }
@@ -69,7 +74,7 @@
         public bool IsRequestOwner { get; set; }  
 
         public DateTime Date { get; set; }
-        public Friend(string username, int level, bool isOnline, bool isPending, bool requestOwner, DateTime date) : base(username, level)
+        public Friend(string username, int level, bool isOnline, bool isPending, bool requestOwner, DateTime date,Bitmap? image = null) : base(username, level,image)
         {
             IsOnline = isOnline;
             IsPending = isPending;

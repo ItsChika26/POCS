@@ -1,3 +1,6 @@
+using System.Drawing.Text;
+using System.Runtime.InteropServices;
+using LauncherApp.Properties;
 using Newtonsoft.Json;
 
 namespace LauncherApp
@@ -10,6 +13,21 @@ namespace LauncherApp
             InitializeComponent();
             LoadLoginDetails();
             InitEvents();
+            InitCustomLabelFont();
+
+        }
+
+        private void InitCustomLabelFont()
+        {
+            PrivateFontCollection pfc = new PrivateFontCollection();
+            int fontLength = Resources.osaka_re.Length;
+            byte[] fontData = Resources.osaka_re;
+            IntPtr data = Marshal.AllocCoTaskMem(fontLength);
+            Marshal.Copy(fontData, 0, data, fontLength);
+            pfc.AddMemoryFont(data, fontLength);
+            Login_Title.Font = new Font(pfc.Families[0], 32, FontStyle.Regular);
+            pfc.Dispose();
+            Marshal.FreeCoTaskMem(data);
         }
 
         private void LoadLoginDetails()
@@ -58,7 +76,7 @@ namespace LauncherApp
             if (response!.Success)
             {
                 SaveLoginDetails();
-                User.Instance.LoadUser(username, response.Level);
+                User.Instance.LoadUser(username, response.Level,response.Image);
                 await LoadFriends();
                 this.Hide();
                 var form = new GameHub();

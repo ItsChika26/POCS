@@ -34,7 +34,6 @@
             label_password = new Label();
             panel1 = new Panel();
             Login_Title = new Label();
-            label1 = new Label();
             MinimizeButton = new Button();
             Exit_button = new Button();
             rememberDetailsCheckbox = new CheckBox();
@@ -73,7 +72,6 @@
             // 
             panel1.BackColor = Color.FromArgb(61, 44, 98);
             panel1.Controls.Add(Login_Title);
-            panel1.Controls.Add(label1);
             panel1.Controls.Add(MinimizeButton);
             panel1.Controls.Add(Exit_button);
             panel1.Controls.Add(rememberDetailsCheckbox);
@@ -93,24 +91,15 @@
             // Login_Title
             // 
             Login_Title.AutoSize = true;
-            Login_Title.Font = new Font("Segoe Print", 23.8000011F, FontStyle.Bold);
+            Login_Title.Font = new Font("Osaka-Sans Serif", 32F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Login_Title.ForeColor = Color.FromArgb(255, 128, 0);
-            Login_Title.Location = new Point(136, 20);
+            Login_Title.Location = new Point(57, 28);
             Login_Title.Name = "Login_Title";
-            Login_Title.Size = new Size(119, 71);
+            Login_Title.Size = new Size(312, 133);
             Login_Title.TabIndex = 6;
-            Login_Title.Text = "POX";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe Print", 23.8000011F, FontStyle.Bold);
-            label1.ForeColor = Color.FromArgb(255, 128, 0);
-            label1.Location = new Point(88, 71);
-            label1.Name = "label1";
-            label1.Size = new Size(214, 71);
-            label1.TabIndex = 10;
-            label1.Text = "Launcher";
+            Login_Title.Text = "POCS\r\nLauncher\r\n";
+            Login_Title.TextAlign = ContentAlignment.MiddleCenter;
+            Login_Title.UseCompatibleTextRendering = true;
             // 
             // MinimizeButton
             // 
@@ -255,6 +244,5 @@
         private Button Exit_button;
         private Label Login_Title;
         private Button MinimizeButton;
-        private Label label1;
     }
 }

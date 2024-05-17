@@ -99,6 +99,7 @@
             roundedPicture1.SizeMode = PictureBoxSizeMode.StretchImage;
             roundedPicture1.TabIndex = 1;
             roundedPicture1.TabStop = false;
+            roundedPicture1.Click += roundedPicture1_Click;
             // 
             // panel7
             // 

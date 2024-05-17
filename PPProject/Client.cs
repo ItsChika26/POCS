@@ -14,6 +14,7 @@ public class Client : IDisposable
     public bool IsConnected => TcpClient!.Connected;
     public event OnDataUpdate? OnDataUpdateEvent; 
 
+
     public static Client Instance
     {
         get { return _instance ??= new Client(); }
