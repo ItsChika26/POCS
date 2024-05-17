@@ -66,10 +66,15 @@
     {
         public bool IsOnline { get; set; }
         public bool IsPending { get; set; }
-        public Friend(string username, int level, bool isOnline, bool isPending) : base(username, level)
+        public bool IsRequestOwner { get; set; }  
+
+        public DateTime Date { get; set; }
+        public Friend(string username, int level, bool isOnline, bool isPending, bool requestOwner, DateTime date) : base(username, level)
         {
             IsOnline = isOnline;
             IsPending = isPending;
+            IsRequestOwner = requestOwner;
+            Date = date;
         }
     }
 }

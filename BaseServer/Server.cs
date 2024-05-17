@@ -48,7 +48,7 @@ namespace BaseServer
         {
             while(!_cts.Token.IsCancellationRequested)
             {
-                var buffer = new byte[BufferSize];
+            var buffer = new byte[BufferSize];
             var stream = client.GetStream();
             var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
             var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);

@@ -1,5 +1,6 @@
 ﻿using LauncherApp.CustomControls;
 using Newtonsoft.Json;
+using System.Windows.Forms;
 using Timer = System.Threading.Timer;
 
 namespace LauncherApp
@@ -24,6 +25,7 @@ namespace LauncherApp
             AddingFriends = false;
             addFriendControl = new AddFriendControl(this);
             UpdateTimer = new Timer(_ => Client.Instance.Update(), null, 0, 5000);
+
         }
 
         private void LoadFriends(object sender, EventArgs e)
@@ -46,8 +48,11 @@ namespace LauncherApp
         {
             this.Invoke((MethodInvoker)delegate
             {
-                SelectedFriendDisplay = AllLabel;
+                FriendListPanel.SuspendLayout();
                 FriendListPanel.Controls.Clear();
+
+                SelectedFriendDisplay = AllLabel;
+
                 if (AddingFriends)
                 {
                     FriendListPanel.Controls.Add(addFriendControl);
@@ -60,6 +65,13 @@ namespace LauncherApp
                     var friendControl = new FriendListItem(friend);
                     FriendListPanel.Controls.Add(friendControl);
                 }
+
+                for(int i = 0; i < 30; i++)
+                {
+                    FriendListPanel.Controls.Add(new FriendListItem(User.Instance.friends[0]));
+                }
+
+                FriendListPanel.ResumeLayout();
             });
         }
 
@@ -76,9 +88,9 @@ namespace LauncherApp
 
                 foreach (var friend in User.Instance.friends)
                 {
-                    if (!friend.IsPending)
+                    if (!friend.IsPending || !friend.IsRequestOwner)
                         continue;
-                    var friendControl = new FriendListItem(friend);
+                    var friendControl = new PendingFriendListItem(friend);
                     FriendListPanel.Controls.Add(friendControl);
                 }
             });
@@ -89,7 +101,7 @@ namespace LauncherApp
             this.Invoke((MethodInvoker)delegate
             {
                 SelectedFriendDisplay = OnlineLabel;
-                FriendListPanel.Controls.Clear();
+                List<Control> controls = new();
                 if (AddingFriends)
                 {
                     FriendListPanel.Controls.Add(addFriendControl);
@@ -99,8 +111,10 @@ namespace LauncherApp
                     if (!friend.IsOnline)
                         continue;
                     var friendControl = new FriendListItem(friend);
-                    FriendListPanel.Controls.Add(friendControl);
+                    controls.Add(friendControl);
                 }
+                FriendListPanel.Controls.Clear();
+                FriendListPanel.Controls.AddRange(controls.ToArray());
             });
         }
 
@@ -111,16 +125,11 @@ namespace LauncherApp
                 var gameControl = new GameControl();
 
                 GameListPanel.Controls.Add(gameControl);
+
             }
 
             Client.Instance.OnDataUpdateEvent += LoadFriends;
 
-
-            //var scrollBar = new CustomvScrollBar();
-            //scrollBar.Dock = DockStyle.Right;
-            //FriendListContainerPanel.Controls.Add(scrollBar);
-
-            //FriendListContainerPanel.Controls.SetChildIndex(scrollBar, 0);
         }
 
         private async void LogoutButton_Click(object sender, EventArgs e)

@@ -7,7 +7,7 @@ namespace BaseServer
     internal static class Database
     {
         private static string ConnectionString =
-            "Data Source=DAYOLAPTOP\\POCS;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
+            "Data Source=AMMURA-LAPTOP;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
         private static SqlConnection Connection = new(ConnectionString);
 
         public static void OpenConnection()
@@ -15,7 +15,7 @@ namespace BaseServer
             Connection.Open();
         }
 
-        public static Friend? GetFriend(string username, bool pending)
+        public static Friend? GetFriend(string username, bool pending, bool isReqOwner, DateTime date)
         {
             string queryString = "SELECT username, level,Online FROM dbo.[Users] where username = @username;";
             SqlCommand command = new SqlCommand(queryString, Connection);
@@ -27,7 +27,7 @@ namespace BaseServer
                     var friend_name = reader.GetString(0);
                     var level = reader.GetInt32(1);
                     var online = reader.GetBoolean(2);
-                    var friend = new Friend(friend_name, level, online, pending);
+                    var friend = new Friend(friend_name, level, online, pending, isReqOwner, date);
                     return friend;
                 }
             }
@@ -134,31 +134,36 @@ namespace BaseServer
         
         public static string LoadFriends(Request request)
         {
-            string queryString = "SELECT user1,user2,pending FROM dbo.[Relationships]" +
+            string queryString = "SELECT user1,user2,pending,Date FROM dbo.[Relationships]" +
                 " where user1 = @username or user2 = @username;";
 
             SqlCommand command = new SqlCommand(queryString, Connection);
             command.Parameters.AddWithValue("@username", request.Username);
 
-            List<KeyValuePair<string,bool>> friends = new();
+            List<(string,bool,bool,DateTime)> friends = new();
             using (SqlDataReader reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
                     string friend_name;
+                    bool isReqOwner = false;
+                    var date = reader.GetDateTime(3);
 
                     if (reader.GetString(0) == request.Username)
                         friend_name = reader.GetString(1);
                     else
+                    {
                         friend_name = reader.GetString(0); 
-                    friends.Add(new KeyValuePair<string, bool>(friend_name, reader.GetBoolean(2)));
+                        isReqOwner = true;
+                    }
+                    friends.Add(new (friend_name,reader.GetBoolean(2),isReqOwner,date));
                 }
             }
             List<Friend> friendsList = new();
 
             foreach (var friend in friends)
             {
-                Friend? friendObj = GetFriend(friend.Key, friend.Value);
+                Friend? friendObj = GetFriend(friend.Item1,friend.Item2, friend.Item3, friend.Item4);
                 if (friendObj != null)
                     friendsList.Add(friendObj);
             }

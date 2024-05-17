@@ -517,6 +517,7 @@
             Controls.Add(GamesPanel);
             Controls.Add(FriendsPanel);
             Controls.Add(AccountPanel);
+            DoubleBuffered = true;
             Name = "GameHub";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "GameHub";
