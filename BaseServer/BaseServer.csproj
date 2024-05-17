@@ -10,10 +10,15 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <MySourceFiles Include="Database/builddatabase.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PPProject\LauncherApp.csproj" />
   </ItemGroup>
+	<Target Name="Inclusion" AfterTargets="Build">
 
+		<Copy SourceFiles="@(MySourceFiles)" DestinationFolder="$(OutDir)" />
+
+	</Target>
 </Project>

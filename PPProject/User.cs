@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LauncherApp
+﻿namespace LauncherApp
 {
 
     public class Player
@@ -26,7 +19,7 @@ namespace LauncherApp
         }
 
     }
-    public class User : Player
+    public class User : Player,IDisposable
     {
         private static User? user;
 
@@ -61,6 +54,11 @@ namespace LauncherApp
         public void AddGame(Game game)
         {
             games.Add(game);
+        }
+
+        public void Dispose()
+        {
+            user = null;
         }
     }
 

@@ -1,37 +1,107 @@
 ﻿using LauncherApp.CustomControls;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Newtonsoft.Json;
+using Timer = System.Threading.Timer;
 
 namespace LauncherApp
 {
     public partial class GameHub : Form
     {
         public User usr = User.Instance;
+        public Label SelectedFriendDisplay { get; set; }
+        public Timer UpdateTimer { get; set; }
+        private bool Connected { get; set; }
+        public bool AddingFriends { get; set; }
+        public AddFriendControl addFriendControl { get; set; }
+
         public GameHub()
         {
             InitializeComponent();
             UsernameLabel.Text = usr.Username;
             LevelNumberLabel.Text = usr.Level.ToString();
             InitControls();
-            LoadFriends();
+            SelectedFriendDisplay = AllLabel;
+            Connected = true;
+            AddingFriends = false;
+            addFriendControl = new AddFriendControl(this);
+            UpdateTimer = new Timer(_ => Client.Instance.Update(), null, 0, 5000);
         }
 
-        private void LoadFriends()
+        private void LoadFriends(object sender, EventArgs e)
         {
-            FriendListPanel.Controls.Clear();
-            foreach (var friend in User.Instance.friends)
+            if (SelectedFriendDisplay == AllLabel)
             {
-                var friendControl = new FriendListItem(friend);
-                FriendListPanel.Controls.Add(friendControl);
+                LoadAllFriends(sender, e);
             }
+            else if (SelectedFriendDisplay == PendingLabel)
+            {
+                LoadPendingFriends(sender, e);
+            }
+            else if (SelectedFriendDisplay == OnlineLabel)
+            {
+                LoadOnlineFriends(sender, e);
+            }
+        }
+
+        private void LoadAllFriends(object sender, EventArgs e)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                SelectedFriendDisplay = AllLabel;
+                FriendListPanel.Controls.Clear();
+                if (AddingFriends)
+                {
+                    FriendListPanel.Controls.Add(addFriendControl);
+                }
+
+                foreach (var friend in User.Instance.friends)
+                {
+                    if (friend.IsPending)
+                        continue;
+                    var friendControl = new FriendListItem(friend);
+                    FriendListPanel.Controls.Add(friendControl);
+                }
+            });
+        }
+
+        private void LoadPendingFriends(object sender, EventArgs e)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                SelectedFriendDisplay = PendingLabel;
+                FriendListPanel.Controls.Clear();
+                if (AddingFriends)
+                {
+                    FriendListPanel.Controls.Add(addFriendControl);
+                }
+
+                foreach (var friend in User.Instance.friends)
+                {
+                    if (!friend.IsPending)
+                        continue;
+                    var friendControl = new FriendListItem(friend);
+                    FriendListPanel.Controls.Add(friendControl);
+                }
+            });
+        }
+
+        private void LoadOnlineFriends(object sender, EventArgs e)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                SelectedFriendDisplay = OnlineLabel;
+                FriendListPanel.Controls.Clear();
+                if (AddingFriends)
+                {
+                    FriendListPanel.Controls.Add(addFriendControl);
+                }
+                foreach (var friend in User.Instance.friends)
+                {
+                    if (!friend.IsOnline)
+                        continue;
+                    var friendControl = new FriendListItem(friend);
+                    FriendListPanel.Controls.Add(friendControl);
+                }
+            });
         }
 
         private void InitControls()
@@ -43,23 +113,29 @@ namespace LauncherApp
                 GameListPanel.Controls.Add(gameControl);
             }
 
+            Client.Instance.OnDataUpdateEvent += LoadFriends;
+
 
             //var scrollBar = new CustomvScrollBar();
             //scrollBar.Dock = DockStyle.Right;
             //FriendListContainerPanel.Controls.Add(scrollBar);
 
             //FriendListContainerPanel.Controls.SetChildIndex(scrollBar, 0);
-
         }
 
         private async void LogoutButton_Click(object sender, EventArgs e)
         {
-            this.Hide();
-            var request = new Request() { Action = "Logout", Username = User.Instance.Username };
-            var message = JsonConvert.SerializeObject(request);
-            await Client.Instance.SendMessageAsync(message);
-            Client.Instance.Disconnect();
-            this.Close();
+            if (Connected)
+            {
+                UpdateTimer.Dispose();
+                var request = new Request() { Action = "Logout", Username = User.Instance.Username };
+                var message = JsonConvert.SerializeObject(request);
+                await Client.Instance.SendMessageAsync(message);
+                Client.Instance.Disconnect();
+                User.Instance.Dispose();
+                Connected = false;
+                this.Close();
+            }
         }
 
 
@@ -77,8 +153,9 @@ namespace LauncherApp
 
         private void AddFriendButton_Click(object sender, EventArgs e)
         {
-            var addFriendControl = new AddFriendControl(this);
+            AddingFriends = true;
             FriendListPanel.Controls.Add(addFriendControl);
+            FriendListPanel.Controls.SetChildIndex(addFriendControl, 0);
         }
     }
 }

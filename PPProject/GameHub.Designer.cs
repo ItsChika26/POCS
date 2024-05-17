@@ -335,6 +335,7 @@
             PendingLabel.Size = new Size(87, 28);
             PendingLabel.TabIndex = 2;
             PendingLabel.Text = "Pending";
+            PendingLabel.Click += LoadPendingFriends;
             PendingLabel.MouseEnter += FilterLabel_MouseEnter;
             PendingLabel.MouseLeave += FilterLabel_MouseLeave;
             // 
@@ -350,6 +351,7 @@
             AllLabel.Size = new Size(61, 28);
             AllLabel.TabIndex = 1;
             AllLabel.Text = "All   /";
+            AllLabel.Click += LoadAllFriends;
             AllLabel.MouseEnter += FilterLabel_MouseEnter;
             AllLabel.MouseLeave += FilterLabel_MouseLeave;
             // 
@@ -365,6 +367,7 @@
             OnlineLabel.Size = new Size(98, 28);
             OnlineLabel.TabIndex = 0;
             OnlineLabel.Text = "Online   /";
+            OnlineLabel.Click += LoadOnlineFriends;
             OnlineLabel.MouseEnter += FilterLabel_MouseEnter;
             OnlineLabel.MouseLeave += FilterLabel_MouseLeave;
             // 
@@ -517,6 +520,8 @@
             Name = "GameHub";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "GameHub";
+            FormClosed += LogoutButton_Click;
+            Load += LoadAllFriends;
             AccountPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)roundedPicture1).EndInit();
             panel7.ResumeLayout(false);

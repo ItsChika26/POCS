@@ -1,6 +1,6 @@
 ﻿namespace LauncherApp
 {
-    public class Request
+    public class Request : EventArgs
     {
         public string Action { get; set; }
         public string Username { get; set; }

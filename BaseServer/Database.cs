@@ -6,18 +6,17 @@ namespace BaseServer
 {
     internal static class Database
     {
-        
         private static string ConnectionString =
             "Data Source=DAYOLAPTOP\\POCS;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
+        private static SqlConnection Connection = new(ConnectionString);
+
+        public static void OpenConnection()
+        {
+            Connection.Open();
+        }
 
         public static Friend? GetFriend(string username, bool pending)
         {
-            using SqlConnection Connection = new SqlConnection(ConnectionString);
-            try
-            {
-                Connection.Open();
-            }
-            catch (Exception e) { Console.WriteLine(e); }
             string queryString = "SELECT username, level,Online FROM dbo.[Users] where username = @username;";
             SqlCommand command = new SqlCommand(queryString, Connection);
             command.Parameters.AddWithValue("@username", username);
@@ -36,12 +35,6 @@ namespace BaseServer
         }
         public static string RegisterUser(Request request)
         {
-            using SqlConnection Connection = new SqlConnection(ConnectionString);
-            try
-            {
-                Connection.Open();
-            }
-            catch (Exception e) { Console.WriteLine(e); }
             string queryString = "SELECT username FROM dbo.[Users] where username = @username;";
 
             SqlCommand command = new SqlCommand(queryString, Connection);
@@ -65,14 +58,29 @@ namespace BaseServer
             return JsonConvert.SerializeObject(new Request(){Success = true});
         }
 
-        public static string UpdateOnlineStatus(string username, bool status)
+        public static void RebuildDatabase()
         {
-            using SqlConnection Connection = new SqlConnection(ConnectionString);
             try
             {
-                Connection.Open();
+                    string script = File.ReadAllText("builddatabase.sql");
+
+                    // Execute the script against the database
+                    using (SqlCommand sqlCommand = new SqlCommand(script, Connection))
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+
+                    Console.WriteLine("Database rebuilt successfully.");
+                
             }
-            catch (Exception e) { Console.WriteLine(e); }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred while rebuilding the database: " + ex.Message);
+            }
+        }
+
+        public static string UpdateOnlineStatus(string username, int status)
+        {
             string queryString = "UPDATE dbo.[Users] SET Online = @online WHERE username = @username;";
             SqlCommand command = new SqlCommand(queryString, Connection);
             command.Parameters.AddWithValue("@username", username);
@@ -82,53 +90,59 @@ namespace BaseServer
         }
         public static string Logout(Request request)
         {
-            UpdateOnlineStatus(request.Username, false);
+            UpdateOnlineStatus(request.Username, 0);
             return JsonConvert.SerializeObject(new Request(){Success = true});
         }
 
         public static string LoginUser(Request request)
         {
-            using SqlConnection Connection = new SqlConnection(ConnectionString);
-            try { 
-                Connection.Open();
-            }
-            catch(Exception e) { Console.WriteLine(e); }
             string queryString = "SELECT username, level,Online FROM dbo.[Users] where username = @username and password = @password;";
 
             SqlCommand command = new SqlCommand(queryString, Connection);
             command.Parameters.AddWithValue("@username", request.Username);
             command.Parameters.AddWithValue("@password", request.Password);
+            bool found = false;
+            int level = 0;
             using (SqlDataReader reader = command.ExecuteReader())
             {
                 if (reader.Read())
                 {
+                    found = true;
+                    level = reader.GetInt32(1);
+
                     if (reader.GetBoolean(2))
                         return JsonConvert.SerializeObject(new Request(){Success = false, FailureMessage = "User already logged in"});
-                    UpdateOnlineStatus(request.Username, true);
-                    return JsonConvert.SerializeObject(new Request(){Username = request.Username,Level = reader.GetInt32(1),Success = true});
                 }
-            }
-            return JsonConvert.SerializeObject(new Request(){Success = false, FailureMessage = "Invalid username or password"});
+            } 
+            if(!found) 
+                return JsonConvert.SerializeObject(new Request(){Success = false, FailureMessage = "Invalid username or password"});
+            UpdateOnlineStatus(request.Username, 1);
+            return JsonConvert.SerializeObject(new Request(){Username = request.Username,Level = level,Success = true});
+        }
+
+        public static string UpdateClient(Request request)
+        {
+            var allUpdates = new Request();
+
+            var friendsRequest = LoadFriends(request);
+            allUpdates.friends = JsonConvert.DeserializeObject<Request>(friendsRequest)!.friends;
+
+            allUpdates.Success = true;
+            return JsonConvert.SerializeObject(allUpdates);
+
         }
         
         public static string LoadFriends(Request request)
         {
-            using SqlConnection Connection = new SqlConnection(ConnectionString);
-
-            try { 
-                Connection.Open();
-            }
-            catch(Exception e) { Console.WriteLine(e); }
-
             string queryString = "SELECT user1,user2,pending FROM dbo.[Relationships]" +
                 " where user1 = @username or user2 = @username;";
 
             SqlCommand command = new SqlCommand(queryString, Connection);
             command.Parameters.AddWithValue("@username", request.Username);
 
+            List<KeyValuePair<string,bool>> friends = new();
             using (SqlDataReader reader = command.ExecuteReader())
             {
-                List<Friend> friends = new List<Friend>();
                 while (reader.Read())
                 {
                     string friend_name;
@@ -136,51 +150,51 @@ namespace BaseServer
                     if (reader.GetString(0) == request.Username)
                         friend_name = reader.GetString(1);
                     else
-                        friend_name = reader.GetString(0);
-
-                    var friend = GetFriend(friend_name, reader.GetBoolean(2));
-                    
-                    if (friend != null)
-                        friends.Add(friend);
+                        friend_name = reader.GetString(0); 
+                    friends.Add(new KeyValuePair<string, bool>(friend_name, reader.GetBoolean(2)));
                 }
-                return JsonConvert.SerializeObject(new Request(){Success = true, friends = friends});
             }
+            List<Friend> friendsList = new();
+
+            foreach (var friend in friends)
+            {
+                Friend? friendObj = GetFriend(friend.Key, friend.Value);
+                if (friendObj != null)
+                    friendsList.Add(friendObj);
+            }
+            return JsonConvert.SerializeObject(new Request(){Success = true, friends = friendsList});
         }
 
         public static string AddFriend(Request request)
         {
-            using SqlConnection Connection = new SqlConnection(ConnectionString);
-            try
-            {
-                Connection.Open();
-            }
-            catch (Exception e) { Console.WriteLine(e); }
-
             string queryString = "SELECT pending FROM dbo.[Relationships] WHERE (user1 = @user1 AND user2 = @user2) OR (user1 = @user2 AND user2 = @user1);";
             SqlCommand selectCommand = new SqlCommand(queryString, Connection);
             selectCommand.Parameters.AddWithValue("@user1", request.Username);
             selectCommand.Parameters.AddWithValue("@user2", request.FriendUsername);
-
+            bool pending = false;
+            bool exists = false;
             using (SqlDataReader reader = selectCommand.ExecuteReader())
             {
                 if (reader.Read())
                 {
-                    bool pending = reader.GetBoolean(1);
-                    if (pending)
-                    {
-                        string updateQueryString = "UPDATE dbo.[Relationships] SET pending = @pending WHERE (user1 = @user1 AND user2 = @user2) OR (user1 = @user2 AND user2 = @user1);";
-                        SqlCommand updateCommand = new SqlCommand(updateQueryString, Connection);
-                        updateCommand.Parameters.AddWithValue("@user1", request.Username);
-                        updateCommand.Parameters.AddWithValue("@user2", request.FriendUsername);
-                        updateCommand.Parameters.AddWithValue("@pending", 0);
-                        updateCommand.ExecuteNonQuery();
-                        return LoadFriends(request);
-                    }
-                    else
-                    {
-                        return JsonConvert.SerializeObject(new Request() { Success = false, FailureMessage = "Friend request already exists" });
-                    }
+                    exists = true;
+                    pending = reader.GetBoolean(0);
+                    
                 }
+            }
+            if (pending && exists)
+            {
+                string updateQueryString = "UPDATE dbo.[Relationships] SET pending = @pending WHERE (user1 = @user1 AND user2 = @user2) OR (user1 = @user2 AND user2 = @user1);";
+                SqlCommand updateCommand = new SqlCommand(updateQueryString, Connection);
+                updateCommand.Parameters.AddWithValue("@user1", request.Username);
+                updateCommand.Parameters.AddWithValue("@user2", request.FriendUsername);
+                updateCommand.Parameters.AddWithValue("@pending", 0);
+                updateCommand.ExecuteNonQuery();
+                return LoadFriends(request);
+            }
+            else if (exists)
+            {
+                return JsonConvert.SerializeObject(new Request() { Success = false, FailureMessage = "Friend request already exists" });
             }
 
             string insertQueryString = "INSERT INTO dbo.[Relationships] (user1, user2, pending, date) VALUES (@user1, @user2, @pending, @date);";
@@ -196,20 +210,16 @@ namespace BaseServer
 
         public static string RemoveFriend(Request request)
         {
-            using SqlConnection Connection = new SqlConnection(ConnectionString);
-            try
-            {
-                Connection.Open();
-            }
-            catch (Exception e) { Console.WriteLine(e); }
-
             string queryString = "DELETE FROM dbo.[Relationships] WHERE (user1 = @user1 AND user2 = @user2) OR (user1 = @user2 AND user2 = @user1);";
             SqlCommand command = new SqlCommand(queryString, Connection);
             command.Parameters.AddWithValue("@user1", request.Username);
             command.Parameters.AddWithValue("@user2", request.FriendUsername);
             command.ExecuteNonQuery();
             return JsonConvert.SerializeObject(new Request() { Success = true });
-
+        }
+        public static void CloseConnection()
+        {
+            Connection.Close();
         }
     }
 }

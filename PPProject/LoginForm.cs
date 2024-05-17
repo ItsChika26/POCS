@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace LauncherApp
@@ -43,7 +41,7 @@ namespace LauncherApp
         }
         private async void button_login_Click(object sender, EventArgs e)
         {
-            if (!await ServerAvailable())
+            if (!await Client.ServerAvailable())
             {
                 MessageBox.Show("Server is not available");
                 return;
@@ -56,8 +54,8 @@ namespace LauncherApp
             string message = JsonConvert.SerializeObject(loginRequest);
             await Client.Instance.SendMessageAsync(message);
 
-            var response = JsonConvert.DeserializeObject<Request>(await Client.Instance.ReceiveMessageAsync());
-            if (response.Success)
+            var response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())!);
+            if (response!.Success)
             {
                 SaveLoginDetails();
                 User.Instance.LoadUser(username, response.Level);
@@ -74,25 +72,11 @@ namespace LauncherApp
             }
         }
 
-        public async Task<bool> ServerAvailable()
-        {
-            if (!Client.Instance.IsConnected)
-            {
-                await Client.Instance.ConnectAsync("localhost", 8080);
-                if (!Client.Instance.IsConnected)
-                {
-                    return false;
-                }
-            }
-            Debug.WriteLine("Server is available");
-            return true;
-        }
-
         private async void button_register_Click(object sender, EventArgs e)
         {
-            if (!await ServerAvailable())
+            if (!await Client.ServerAvailable())
             {
-                MessageBox.Show("Server is not available");
+                MessageBox.Show(@"Server is not available");
                 return;
             }
             string username = textBox_user.Text;
@@ -124,11 +108,11 @@ namespace LauncherApp
             Request registerRequest = new() { Username = username, Password = password, Action = "Register" };
             var message = JsonConvert.SerializeObject(registerRequest);
             await Client.Instance.SendMessageAsync(message);
-            var response = JsonConvert.DeserializeObject<Request>(await Client.Instance.ReceiveMessageAsync());
+            var response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())!);
 
-            if (response.Success)
+            if (response!.Success)
             {
-                MessageBox.Show("User registered successfully");
+                MessageBox.Show(@"User registered successfully");
             }
             else
             {
@@ -141,13 +125,14 @@ namespace LauncherApp
         {
             var request = new Request { Username = User.Instance.Username, Action = "LoadFriends" };
             var message = JsonConvert.SerializeObject(request);
-            Client.Instance.SendMessageAsync(message);
-            var response = JsonConvert.DeserializeObject<Request>(await Client.Instance.ReceiveMessageAsync());
-            User.Instance.UpdateFriends(response.friends);
+            _ = Client.Instance.SendMessageAsync(message);
+            var response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())!);
+            User.Instance.UpdateFriends(response!.friends);
         }
 
         private void Exit_button_Click(object sender, EventArgs e)
         {
+            Client.Instance.Disconnect();
             this.Close();
         }
 
@@ -173,10 +158,10 @@ namespace LauncherApp
 
         private void InitEvents()
         {
-            MinimizeButton.MouseEnter += menuButton_MouseEnter;
-            MinimizeButton.MouseLeave += menuButton_MouseLeave;
-            Exit_button.MouseEnter += menuButton_MouseEnter;
-            Exit_button.MouseLeave += menuButton_MouseLeave;
+            MinimizeButton.MouseEnter += menuButton_MouseEnter!;
+            MinimizeButton.MouseLeave += menuButton_MouseLeave!;
+            Exit_button.MouseEnter += menuButton_MouseEnter!;
+            Exit_button.MouseLeave += menuButton_MouseLeave!;
         }
 
         private void MinimizeButton_Click(object sender, EventArgs e)

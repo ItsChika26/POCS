@@ -4,10 +4,10 @@ namespace LauncherApp.CustomControls
 {
     public partial class AddFriendControl : UserControl
     {
-        GameHub parent;
+        private readonly GameHub _parent;
         public AddFriendControl(GameHub gameHub)
         {
-            parent = gameHub;
+            _parent = gameHub;
             InitializeComponent();
         }
 
@@ -20,24 +20,25 @@ namespace LauncherApp.CustomControls
         {
             var request = new Request { Username = User.Instance.Username,FriendUsername = textBox1.Text, Action = "AddFriend" };
             var message = JsonConvert.SerializeObject(request);
-            Client.Instance.SendMessageAsync(message);
-            var response = JsonConvert.DeserializeObject<Request>(await Client.Instance.ReceiveMessageAsync());
-            if (response.Success)
+            _ = Client.Instance.SendMessageAsync(message);
+            var response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())! );
+            _parent.AddingFriends = false;
+            if (response!.Success)
             {
                 var load = JsonConvert.SerializeObject(new Request { Username = User.Instance.Username, Action = "LoadFriends" } );
-                Client.Instance.SendMessageAsync(load);
-                response = JsonConvert.DeserializeObject<Request>(await Client.Instance.ReceiveMessageAsync());
+                _ = Client.Instance.SendMessageAsync(load);
+                response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())!);
 
-                User.Instance.UpdateFriends(response.friends);
-                parent.FriendListPanel.Controls.Clear();
+                User.Instance.UpdateFriends(response!.friends);
+                _parent.FriendListPanel.Controls.Clear();
                 foreach (var friend in User.Instance.friends)
                 {
                     var friendControl = new FriendListItem(friend);
-                    parent.FriendListPanel.Controls.Add(friendControl);
+                    _parent.FriendListPanel.Controls.Add(friendControl);
                 }
 
                 textBox1.Text = "";
-                MessageBox.Show("Friend added successfully");
+                MessageBox.Show(@"Friend added successfully");
             }
             else
             {

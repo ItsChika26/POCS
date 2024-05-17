@@ -1,9 +1,8 @@
 ﻿using LauncherApp;
+using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Microsoft.Identity.Client.NativeInterop;
-using Newtonsoft.Json;
 
 namespace BaseServer
 {
@@ -20,8 +19,8 @@ namespace BaseServer
             _cts = new CancellationTokenSource();
             _listener = new TcpListener(IPAddress.Any, 8080);
             _listener.Start();
-            
-            Console.WriteLine("Server started!");
+            Database.OpenConnection();
+            Console.WriteLine(@"Server started!");
             Task.Run(AcceptClientsAsync, _cts.Token);
         }
 
@@ -54,13 +53,13 @@ namespace BaseServer
             var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
             var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
             var request = JsonConvert.DeserializeObject<Request>(data);
-            Console.WriteLine("Request received: " + request.Action);
+            Console.WriteLine(@"Request received: " + request!.Action);
 
-            string responseMessage = ActionList.Actions[request.Action](request);
+            string responseMessage = ActionList.Actions[request.Action](request)!;
             var response = Encoding.UTF8.GetBytes(responseMessage); 
             await stream.WriteAsync(response, 0, response.Length); 
             await stream.FlushAsync();
-            Console.WriteLine("Response sent: " + responseMessage);
+            Console.WriteLine(@"Response sent: " + responseMessage);
             }
         }
 
@@ -68,7 +67,8 @@ namespace BaseServer
         {
             _cts.Cancel();
             _listener.Stop();
-            Console.WriteLine("Server stopped!");
+            Database.CloseConnection();
+            Console.WriteLine(@"Server stopped!");
         }
     }
 }
