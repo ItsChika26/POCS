@@ -9,7 +9,7 @@
         public int Level { get; set; }
         public bool Success { get; set; }
         public string SuccessMessage { get; set; }
-        public byte[] Image { get; set; }
+        public Bitmap? Image { get; set; }
         public string FailureMessage { get; set; }
         public List<Friend> friends { get; set; }
         

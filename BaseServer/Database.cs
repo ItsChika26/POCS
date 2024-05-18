@@ -1,6 +1,4 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.Versioning;
 using LauncherApp;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
@@ -10,7 +8,7 @@ namespace BaseServer
     internal static class Database
     {
         private static string ConnectionString =
-            "Data Source=AMMURA-LAPTOP;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            "Data Source=DAYOLAPTOP\\POCS;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
         private static SqlConnection Connection = new(ConnectionString);
 
         public static void OpenConnection()
@@ -37,9 +35,7 @@ namespace BaseServer
                         {
                             imageBytes = (byte[])reader.GetValue(3); // Retrieve the image as byte array
                         }
-
-                        var image = Utils.BitmapFromBytes(imageBytes);
-                        var friend = new Friend(friend_name, level, online, pending, isReqOwner, date, image);
+                        var friend = new Friend(friend_name, level, online, pending, isReqOwner, date,imageBytes == null? imageBytes: new Bitmap()));
                         return friend;
                     }
                 }
@@ -84,19 +80,13 @@ namespace BaseServer
                 }
 
                 queryString =
-                    "INSERT INTO dbo.[Users] (username, password, level, date_registered, XP, Image) VALUES (@username, @password, @level, @date_registered, @XP, @image);";
+                    "INSERT INTO dbo.[Users] (username, password, level, date_registered, XP) VALUES (@username, @password, @level, @date_registered, @XP);";
                 SqlCommand insertCommand = new SqlCommand(queryString, Connection);
                 insertCommand.Parameters.AddWithValue("@username", request.Username);
                 insertCommand.Parameters.AddWithValue("@password", request.Password);
                 insertCommand.Parameters.AddWithValue("@level", 0);
                 insertCommand.Parameters.AddWithValue("@date_registered", DateTime.Now);
                 insertCommand.Parameters.AddWithValue("@XP", 0);
-
-                using (HttpClient client = new HttpClient())
-                {
-                    byte[] imageBytes = client.GetByteArrayAsync("https://avatar.iran.liara.run/public").Result;
-                    insertCommand.Parameters.AddWithValue("@image", imageBytes);
-                }   
 
                 insertCommand.ExecuteNonQuery();
                 return JsonConvert.SerializeObject(new Request() { Success = true });
@@ -193,11 +183,14 @@ namespace BaseServer
 
                 UpdateOnlineStatus(request.Username, 1);
 
+
+
+                // Create a new response object with the image included
                 var response = new Request()
                 {
                     Username = request.Username,
                     Level = level,
-                    Image = imageBytes,
+                    Image = imageBytes == null? null: new (imageBytes), // Convert the byte array to Base64 string
                     Success = true
                 };
 
@@ -291,7 +284,7 @@ namespace BaseServer
                     {
                         exists = true;
                         pending = reader.GetBoolean(0);
-                        
+
                     }
                 }
                 if (pending && exists)

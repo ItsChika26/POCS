@@ -10,9 +10,8 @@ namespace BaseServer
             { "Register", Database.RegisterUser },
             { "LoadFriends", Database.LoadFriends },
             { "AddFriend",Database.AddFriend },
-            { "Logout", Database.Logout},
-            { "UpdateClient",Database.UpdateClient},
-            { "UpdateIcon" , Database.UpdateIcon}
+            {"Logout", Database.Logout},
+            {"UpdateClient",Database.UpdateClient}
         };
     }
 }

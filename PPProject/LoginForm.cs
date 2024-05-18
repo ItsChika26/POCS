@@ -76,7 +76,7 @@ namespace LauncherApp
             if (response!.Success)
             {
                 SaveLoginDetails();
-                User.Instance.LoadUser(username, response.Level,Utils.BitmapFromBytes(response.Image));
+                User.Instance.LoadUser(username, response.Level,response.Image);
                 await LoadFriends();
                 this.Hide();
                 var form = new GameHub();
