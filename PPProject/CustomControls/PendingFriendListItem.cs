@@ -16,7 +16,6 @@ namespace LauncherApp.CustomControls
     {
 
         private Color borderColor;
-        public Friend FriendDetails { get; set; }
 
         public Color BorderColor
         {
@@ -56,7 +55,6 @@ namespace LauncherApp.CustomControls
         public PendingFriendListItem(Friend friend)
         {
             InitializeComponent();
-            FriendDetails = friend;
             UsernameLabel.Text = friend.Username;
             LevelNumberLabel.Text = friend.Level.ToString();
             SetDate(friend.Date);
@@ -110,7 +108,6 @@ namespace LauncherApp.CustomControls
             _ = Client.Instance.SendMessageAsync(message);
             var response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())!);
             var form = (GameHub)ParentForm!;
-            form.PendingFriendListItems.Remove(FriendDetails.Username);
         }
 
         private void IgnoreButton_Click(object sender, EventArgs e)
