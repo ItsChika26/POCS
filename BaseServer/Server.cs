@@ -10,8 +10,8 @@ namespace BaseServer
     {
         private TcpListener _listener;
         private CancellationTokenSource _cts;
-        private const int BufferSize = 4 * 1024 * 1024; // 4 MB
-        private List<TcpClient> _clients;
+        private const int BufferSize = 20 * 1024 * 1024; // 4 MB
+        public Dictionary<string, TcpClient> _clients;
 
         public void Start()
         {
@@ -29,14 +29,13 @@ namespace BaseServer
             while (!_cts.Token.IsCancellationRequested)
             {
                 var client = await _listener.AcceptTcpClientAsync();
-                _clients.Add(client);
                 _ = Task.Run(() => ProcessRequests(client));
             }
         }
 
         private void BroadcastMessage(string message)
         {
-            foreach (var client in _clients)
+            foreach (var client in _clients.Values)
             {
                 var stream = client.GetStream();
                 var response = Encoding.UTF8.GetBytes(message);
@@ -46,34 +45,58 @@ namespace BaseServer
 
         private async Task ProcessRequests(TcpClient client)
         {
-                try
+            string Username = "";
+            try
+            {
+                while (!_cts.Token.IsCancellationRequested)
                 {
-                    while (!_cts.Token.IsCancellationRequested)
+                    var buffer = new byte[BufferSize];
+                    var stream = client.GetStream();
+                    var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    var request = JsonConvert.DeserializeObject<Request>(data);
+                    Console.WriteLine(@"Request received: " + request!.Action);
+                    Request response = await ActionList.Actions[request.Action](request)!;
+
+                    if (request.Action == "Login" && response.Success)
                     {
-                        var buffer = new byte[BufferSize];
-                        var stream = client.GetStream();
-                        var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                        var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                        var request = JsonConvert.DeserializeObject<Request>(data);
-                        Console.WriteLine(@"Request received: " + request!.Action);
+                        Username = request.Username;
+                        _clients.Add(request.Username, client);
+                    }
 
-                        string responseMessage = ActionList.Actions[request.Action](request)!;
-                        var response = Encoding.UTF8.GetBytes(responseMessage);
-                        await stream.WriteAsync(response, 0, response.Length);
-                        if (request.Action == "Logout")
-                        {
-                            _clients.Remove(client);
-                            client.Close();
-                            break;
-                        }
+                    try
+                    {
+                        var responseMessage = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response));
+                        await stream.WriteAsync(responseMessage, 0, responseMessage.Length);
+                        Console.WriteLine(@"Response sent: " + responseMessage.Length);
+                    }
+                    catch (JsonWriterException ex)
+                    {
+                        Console.WriteLine(@"Error serializing response: " + ex.Message);
+                        response = new Request { Success = false, FailureMessage = "Error serializing response" };
+                        var errorMessage = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response));
+                        await stream.WriteAsync(errorMessage, 0, errorMessage.Length);
+                    }
 
-                        Console.WriteLine(@"Response sent: " + responseMessage);
+                    if (request.Action == "Logout" && response.Success)
+                    {
+                        _clients.Remove(request.Username);
+                        client.Close();
+                        break;
                     }
                 }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(@"Error Processing response: " + ex.Message);
+                if (Username != "")
                 {
-                    Console.WriteLine(@"Error Processing response: " + ex.Message);
+                    _clients.Remove(Username);
+                    Database.Logout(new Request() { Username = Username });
                 }
+
+                client.Close();
+            }
         }
 
         public void Stop()

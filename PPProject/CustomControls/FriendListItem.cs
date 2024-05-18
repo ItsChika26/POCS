@@ -14,6 +14,7 @@ namespace LauncherApp.CustomControls
     {
 
         private Color borderColor;
+        public Friend FriendDetails { get; set; }
 
         public Color BorderColor
         {
@@ -27,6 +28,7 @@ namespace LauncherApp.CustomControls
         public FriendListItem(Friend friend)
         {
             InitializeComponent();
+            FriendDetails = friend;
             UsernameLabel.Text = friend.Username;
             LevelNumberLabel.Text = friend.Level.ToString();
             ProfilePicture.Image = Utils.BitmapFromBytes(friend.Image);

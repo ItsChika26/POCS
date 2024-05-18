@@ -30,7 +30,7 @@ namespace LauncherApp
 
         public List<Game> games = new List<Game>();
 
-        public List<Friend> friends { get; set; } = new List<Friend>();
+        public Dictionary<string,Friend> friends { get; set; } = new();
 
         public static User Instance
         {
@@ -50,7 +50,17 @@ namespace LauncherApp
 
         public void UpdateFriends(List<Friend> _friends)
         {
-            friends = _friends;
+            foreach (var friend in _friends)
+            {
+                if (friends.ContainsKey(friend.Username))
+                {
+                    friends[friend.Username].Update(friend);
+                }
+                else
+                {
+                    friends.Add(friend.Username, friend);
+                }
+            }
         }
         public void UpdateUsername(string username)
         {
@@ -80,6 +90,15 @@ namespace LauncherApp
             IsPending = isPending;
             IsRequestOwner = requestOwner;
             Date = date;
+        }
+
+        public void Update(Friend friend)
+        {
+            Level = friend.Level;
+            Image = friend.Image;
+            IsOnline = friend.IsOnline;
+            IsPending = friend.IsPending;
+            Date = friend.Date;
         }
     }
 }

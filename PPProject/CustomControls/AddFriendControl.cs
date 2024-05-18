@@ -30,13 +30,6 @@ namespace LauncherApp.CustomControls
                 response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())!);
 
                 User.Instance.UpdateFriends(response!.friends);
-                _parent.FriendListPanel.Controls.Clear();
-                foreach (var friend in User.Instance.friends)
-                {
-                    var friendControl = new FriendListItem(friend);
-                    _parent.FriendListPanel.Controls.Add(friendControl);
-                }
-
                 textBox1.Text = "";
                 MessageBox.Show(@"Friend added successfully");
             }

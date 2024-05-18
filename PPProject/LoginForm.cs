@@ -8,6 +8,8 @@ namespace LauncherApp
     public partial class LoginForm : Form
     {
         private const string LoginDetailsFilePath = "loginDetails.txt";
+        private PrivateFontCollection pfc = new PrivateFontCollection();
+        private bool isClosing;
         public LoginForm()
         {
             InitializeComponent();
@@ -19,15 +21,12 @@ namespace LauncherApp
 
         private void InitCustomLabelFont()
         {
-            PrivateFontCollection pfc = new PrivateFontCollection();
             int fontLength = Resources.osaka_re.Length;
             byte[] fontData = Resources.osaka_re;
             IntPtr data = Marshal.AllocCoTaskMem(fontLength);
             Marshal.Copy(fontData, 0, data, fontLength);
             pfc.AddMemoryFont(data, fontLength);
             Login_Title.Font = new Font(pfc.Families[0], 32, FontStyle.Regular);
-            pfc.Dispose();
-            Marshal.FreeCoTaskMem(data);
         }
 
         private void LoadLoginDetails()
@@ -86,7 +85,6 @@ namespace LauncherApp
                 await LoadFriends();
                 DialogResult = DialogResult.OK;
                 this.Close();
-
             }
             else
             {
@@ -154,9 +152,14 @@ namespace LauncherApp
 
         private void Exit_button_Click(object sender, EventArgs e)
         {
-            Client.Instance.Disconnect();
-            DialogResult = DialogResult.Cancel;
-            this.Close();
+            if (!isClosing)
+            {
+                isClosing = true;
+                SaveLoginDetails();
+                pfc.Dispose();
+                DialogResult = DialogResult.Cancel;
+                this.Close();
+            }
         }
 
         private void Login_Title_Click(object sender, EventArgs e)
@@ -191,5 +194,6 @@ namespace LauncherApp
         {
             this.WindowState = FormWindowState.Minimized;
         }
+
     }
 }

@@ -46,7 +46,7 @@
             panel6 = new Panel();
             FriendsPanel = new Panel();
             FriendListContainerPanel = new Panel();
-            FriendListPanel = new FlowLayoutPanel();
+            FriendListPanel = new CustomControls.CustomFLP();
             AddFriendButton = new Button();
             panel3 = new Panel();
             PendingLabel = new Label();
@@ -293,9 +293,9 @@
             // 
             FriendListPanel.AutoSize = true;
             FriendListPanel.FlowDirection = FlowDirection.TopDown;
-            FriendListPanel.Location = new Point(8, 9);
+            FriendListPanel.Location = new Point(8, 5);
             FriendListPanel.Name = "FriendListPanel";
-            FriendListPanel.Size = new Size(245, 396);
+            FriendListPanel.Size = new Size(250, 404);
             FriendListPanel.TabIndex = 8;
             // 
             // AddFriendButton
@@ -582,7 +582,7 @@
         private Label label5;
         private Panel panel13;
         private Panel FriendListContainerPanel;
-        public FlowLayoutPanel FriendListPanel;
         public FlowLayoutPanel GameListPanel;
+        private CustomControls.CustomFLP FriendListPanel;
     }
 }

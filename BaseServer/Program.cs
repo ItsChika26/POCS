@@ -32,8 +32,17 @@ namespace BaseServer
                     string[] split = command.Split(' ');
                     if (split.Length == 2)
                     {
-                        Database.Logout(new Request() {Username= split[1]});
-                        Console.WriteLine($@"{split[1]} logged out");
+                        Database.Logout(new Request() { Username = split[1] });
+                        if(server._clients.ContainsKey(split[1]))
+                        {
+                            server._clients[split[1]].Close();
+                            if (server._clients.Remove(split[1]))
+                                Console.WriteLine($@"{split[1]} logged out");
+                        }
+                        else
+                        {
+                            Console.WriteLine($@"{split[1]} is not logged in");
+                        }
                     }
                     else
                     {

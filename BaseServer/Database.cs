@@ -13,21 +13,21 @@ namespace BaseServer
             "Data Source=DAYOLAPTOP\\POCS;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
         private static SqlConnection Connection = new(ConnectionString);
 
-        public static void OpenConnection()
+        public static async Task OpenConnection()
         {
-            Connection.Open();
+            await Connection.OpenAsync();
         }
 
-        public static Friend? GetFriend(string username, bool pending, bool isReqOwner, DateTime date)
+        public static async Task<Friend?> GetFriend(string username, bool pending, bool isReqOwner, DateTime date)
         {
             try
             {
                 string queryString = "SELECT username, level,Online,Image FROM dbo.[Users] where username = @username;";
                 SqlCommand command = new SqlCommand(queryString, Connection);
                 command.Parameters.AddWithValue("@username", username);
-                using (SqlDataReader reader = command.ExecuteReader())
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
                 {
-                    if (reader.Read())
+                    if (await reader.ReadAsync())
                     {
                         var friend_name = reader.GetString(0);
                         var level = reader.GetInt32(1);
@@ -50,7 +50,7 @@ namespace BaseServer
             return null;
         }
 
-        public static string UpdateIcon(Request request)
+        public async static Task<Request> UpdateIcon(Request request)
         {
             try
             {
@@ -58,8 +58,8 @@ namespace BaseServer
                 SqlCommand command = new SqlCommand(queryString, Connection);
                 command.Parameters.AddWithValue("@username", request.Username);
                 command.Parameters.AddWithValue("@icon", request.Image);
-                command.ExecuteNonQuery();
-                return JsonConvert.SerializeObject(new Request() { Success = true });
+                await command.ExecuteNonQueryAsync();
+                return new Request() { Success = true };
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace BaseServer
             return null;
         }
 
-        public static string RegisterUser(Request request)
+        public static async Task<Request> RegisterUser(Request request)
         {
             try
             {
@@ -76,10 +76,10 @@ namespace BaseServer
 
                 SqlCommand command = new SqlCommand(queryString, Connection);
                 command.Parameters.AddWithValue("@username", request.Username);
-                using (SqlDataReader reader = command.ExecuteReader())
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
                 {
-                    if (reader.Read())
-                        return JsonConvert.SerializeObject(new Request() { Success = false, FailureMessage = "User already exists" });
+                    if (await reader.ReadAsync())
+                        return new Request() { Success = false, FailureMessage = "User already exists" };
                 }
 
                 queryString =
@@ -93,12 +93,12 @@ namespace BaseServer
 
                 using (HttpClient client = new HttpClient())
                 {
-                    byte[] imageBytes = client.GetByteArrayAsync("https://avatar.iran.liara.run/public").Result;
+                    byte[] imageBytes = await client.GetByteArrayAsync("https://avatar.iran.liara.run/public");
                     insertCommand.Parameters.AddWithValue("@image", imageBytes);
-                }   
+                }
 
-                insertCommand.ExecuteNonQuery();
-                return JsonConvert.SerializeObject(new Request() { Success = true });
+                await insertCommand.ExecuteNonQueryAsync();
+                return new Request() { Success = true };
             }
             catch (Exception ex)
             {
@@ -107,7 +107,7 @@ namespace BaseServer
             return null;
         }
 
-        public static void RebuildDatabase()
+        public static async Task RebuildDatabase()
         {
             try
             {
@@ -116,7 +116,7 @@ namespace BaseServer
                 // Execute the script against the database
                 using (SqlCommand sqlCommand = new SqlCommand(script, Connection))
                 {
-                    sqlCommand.ExecuteNonQuery();
+                    await sqlCommand.ExecuteNonQueryAsync();
                 }
 
                 Console.WriteLine("Database rebuilt successfully.");
@@ -127,7 +127,7 @@ namespace BaseServer
             }
         }
 
-        public static string UpdateOnlineStatus(string username, int status)
+        public static async Task<Request> UpdateOnlineStatus(string username, int status)
         {
             try
             {
@@ -135,8 +135,8 @@ namespace BaseServer
                 SqlCommand command = new SqlCommand(queryString, Connection);
                 command.Parameters.AddWithValue("@username", username);
                 command.Parameters.AddWithValue("@online", status);
-                command.ExecuteNonQuery();
-                return JsonConvert.SerializeObject(new Request() { Success = true });
+                await command.ExecuteNonQueryAsync();
+                return new Request() { Success = true };
             }
             catch (Exception ex)
             {
@@ -145,12 +145,12 @@ namespace BaseServer
             return null;
         }
 
-        public static string Logout(Request request)
+        public static async Task<Request> Logout(Request request)
         {
             try
             {
-                UpdateOnlineStatus(request.Username, 0);
-                return JsonConvert.SerializeObject(new Request() { Success = true });
+                await UpdateOnlineStatus(request.Username, 0);
+                return new Request() { Success = true };
             }
             catch (Exception ex)
             {
@@ -159,7 +159,7 @@ namespace BaseServer
             return null;
         }
 
-        public static string LoginUser(Request request)
+        public static async Task<Request> LoginUser(Request request)
         {
             try
             {
@@ -172,9 +172,9 @@ namespace BaseServer
                 int level = 0;
                 byte[] imageBytes = null; // Variable to store the image as byte array
 
-                using (SqlDataReader reader = command.ExecuteReader())
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
                 {
-                    if (reader.Read())
+                    if (await reader.ReadAsync())
                     {
                         found = true;
                         level = reader.GetInt32(1);
@@ -183,14 +183,14 @@ namespace BaseServer
                             imageBytes = (byte[])reader.GetValue(3); // Retrieve the image as byte array
                         }
                         if (reader.GetBoolean(2))
-                            return JsonConvert.SerializeObject(new Request() { Success = false, FailureMessage = "User already logged in" });
+                            return new Request() { Success = false, FailureMessage = "User already logged in" };
                     }
                 }
 
                 if (!found)
-                    return JsonConvert.SerializeObject(new Request() { Success = false, FailureMessage = "Invalid username or password" });
+                    return new Request() { Success = false, FailureMessage = "Invalid username or password" };
 
-                UpdateOnlineStatus(request.Username, 1);
+                await UpdateOnlineStatus(request.Username, 1);
 
                 var response = new Request()
                 {
@@ -200,7 +200,7 @@ namespace BaseServer
                     Success = true
                 };
 
-                return JsonConvert.SerializeObject(response);
+                return response;
             }
             catch (Exception ex)
             {
@@ -209,17 +209,17 @@ namespace BaseServer
             return null;
         }
 
-        public static string UpdateClient(Request request)
+        public static async Task<Request> UpdateClient(Request request)
         {
             try
             {
                 var allUpdates = new Request();
 
-                var friendsRequest = LoadFriends(request);
-                allUpdates.friends = JsonConvert.DeserializeObject<Request>(friendsRequest)!.friends;
+                var friendsRequest = await LoadFriends(request);
+                allUpdates.friends = friendsRequest.friends;
 
                 allUpdates.Success = true;
-                return JsonConvert.SerializeObject(allUpdates);
+                return allUpdates;
             }
             catch (Exception ex)
             {
@@ -228,7 +228,7 @@ namespace BaseServer
             return null;
         }
 
-        public static string LoadFriends(Request request)
+        public static async Task<Request> LoadFriends(Request request)
         {
             try
             {
@@ -239,9 +239,9 @@ namespace BaseServer
                 command.Parameters.AddWithValue("@username", request.Username);
 
                 List<(string, bool, bool, DateTime)> friends = new();
-                using (SqlDataReader reader = command.ExecuteReader())
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
                 {
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
                         string friend_name;
                         bool isReqOwner = false;
@@ -261,11 +261,11 @@ namespace BaseServer
 
                 foreach (var friend in friends)
                 {
-                    Friend? friendObj = GetFriend(friend.Item1, friend.Item2, friend.Item3, friend.Item4);
+                    Friend? friendObj = await GetFriend(friend.Item1, friend.Item2, friend.Item3, friend.Item4);
                     if (friendObj != null)
                         friendsList.Add(friendObj);
                 }
-                return JsonConvert.SerializeObject(new Request() { Success = true, friends = friendsList });
+                return new Request() { Success = true, friends = friendsList };
             }
             catch (Exception ex)
             {
@@ -274,7 +274,7 @@ namespace BaseServer
             return null;
         }
 
-        public static string AddFriend(Request request)
+        public static async Task<Request> AddFriend(Request request)
         {
             try
             {
@@ -284,13 +284,13 @@ namespace BaseServer
                 selectCommand.Parameters.AddWithValue("@user2", request.FriendUsername);
                 bool pending = false;
                 bool exists = false;
-                using (SqlDataReader reader = selectCommand.ExecuteReader())
+                using (SqlDataReader reader = await selectCommand.ExecuteReaderAsync())
                 {
-                    if (reader.Read())
+                    if (await reader.ReadAsync())
                     {
                         exists = true;
                         pending = reader.GetBoolean(0);
-                        
+
                     }
                 }
                 if (pending && exists)
@@ -300,12 +300,12 @@ namespace BaseServer
                     updateCommand.Parameters.AddWithValue("@user1", request.Username);
                     updateCommand.Parameters.AddWithValue("@user2", request.FriendUsername);
                     updateCommand.Parameters.AddWithValue("@pending", 0);
-                    updateCommand.ExecuteNonQuery();
-                    return LoadFriends(request);
+                    await updateCommand.ExecuteNonQueryAsync();
+                    return await LoadFriends(request);
                 }
                 else if (exists)
                 {
-                    return JsonConvert.SerializeObject(new Request() { Success = false, FailureMessage = "Friend request already exists" });
+                    return new Request() { Success = false, FailureMessage = "Friend request already exists" };
                 }
 
                 string insertQueryString = "INSERT INTO dbo.[Relationships] (user1, user2, pending, date) VALUES (@user1, @user2, @pending, @date);";
@@ -315,8 +315,8 @@ namespace BaseServer
                 insertCommand.Parameters.AddWithValue("@pending", 1);
                 insertCommand.Parameters.AddWithValue("@date", DateTime.Now);
 
-                insertCommand.ExecuteNonQuery();
-                return JsonConvert.SerializeObject(new Request() { Success = true });
+                await insertCommand.ExecuteNonQueryAsync();
+                return new Request() { Success = true };
             }
             catch (Exception ex)
             {
@@ -325,7 +325,7 @@ namespace BaseServer
             return null;
         }
 
-        public static string RemoveFriend(Request request)
+        public static async Task<Request> RemoveFriend(Request request)
         {
             try
             {
@@ -333,8 +333,8 @@ namespace BaseServer
                 SqlCommand command = new SqlCommand(queryString, Connection);
                 command.Parameters.AddWithValue("@user1", request.Username);
                 command.Parameters.AddWithValue("@user2", request.FriendUsername);
-                command.ExecuteNonQuery();
-                return JsonConvert.SerializeObject(new Request() { Success = true });
+                await command.ExecuteNonQueryAsync();
+                return new Request() { Success = true };
             }
             catch (Exception ex)
             {

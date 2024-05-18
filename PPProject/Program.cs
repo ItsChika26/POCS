@@ -11,13 +11,17 @@ namespace LauncherApp
         {
             
             ApplicationConfiguration.Initialize();
-            var LoginForm = new LoginForm();
-            Application.Run(LoginForm);
-            if (LoginForm.DialogResult == DialogResult.Cancel)
+            while(true)
             {
-                return;
+                if(new LoginForm().ShowDialog() == DialogResult.OK)
+                {
+                    Application.Run(new GameHub());
+                }
+                else
+                {
+                    break;
+                }
             }
-            Application.Run(new GameHub());
         }
     }
 }

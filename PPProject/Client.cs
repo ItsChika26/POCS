@@ -61,7 +61,7 @@ public class Client : IDisposable
 
     public async Task<string?> ReceiveMessageAsync()
     {
-        var responseBuffer = new byte[4*1024*1024];
+        var responseBuffer = new byte[20*1024*1024];
         var responseLength = await _stream?.ReadAsync(responseBuffer, 0, responseBuffer.Length)!;
         var response = Encoding.UTF8.GetString(responseBuffer, 0, responseLength);
         Debug.WriteLine("Response received: " + response);
