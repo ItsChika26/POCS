@@ -5,17 +5,17 @@ namespace LauncherApp
 
     public class Player
     {
-        public Image? Image { get; set; }
+        public byte[] Image { get; set; }
         public string Username { get; set; }
         public int Level { get; set; }
 
 
-        public Player(string username, int level, Bitmap? image= null)
+        public Player(string username, int level, byte[]? image= null)
         {
 
             Username = username;
             Level = level;
-            Image = image ?? Resources.c0589be1b84c602dae8e97419541708d;
+            Image = image ?? Utils.DefaultImage;
         }
 
         public void LevelUp()
@@ -39,13 +39,13 @@ namespace LauncherApp
                 return user ??= new User("Guest", 0);
             }
         }
-        private User(string username,int level) : base(username, level)
+        private User(string username,int level, byte[]? image = null) : base(username, level,image)
         {
         }
 
-        public void LoadUser(string username, int level, Bitmap? image = null)
+        public void LoadUser(string username, int level, byte[]? image = null)
         {
-            user = new User(username, level);
+            user = new User(username, level, image);
         }
 
         public void UpdateFriends(List<Friend> _friends)
@@ -74,7 +74,7 @@ namespace LauncherApp
         public bool IsRequestOwner { get; set; }  
 
         public DateTime Date { get; set; }
-        public Friend(string username, int level, bool isOnline, bool isPending, bool requestOwner, DateTime date,Bitmap? image = null) : base(username, level,image)
+        public Friend(string username, int level, bool isOnline, bool isPending, bool requestOwner, DateTime date,byte[]? image = null) : base(username, level,image)
         {
             IsOnline = isOnline;
             IsPending = isPending;

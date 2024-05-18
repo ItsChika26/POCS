@@ -10,7 +10,7 @@ namespace BaseServer
     internal static class Database
     {
         private static string ConnectionString =
-            "Data Source=AMMURA-LAPTOP;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            "Data Source=DAYOLAPTOP\\POCS;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
         private static SqlConnection Connection = new(ConnectionString);
 
         public static void OpenConnection()
@@ -37,8 +37,7 @@ namespace BaseServer
                         {
                             imageBytes = (byte[])reader.GetValue(3); // Retrieve the image as byte array
                         }
-
-                        var image = Utils.BitmapFromBytes(imageBytes);
+                        var image = imageBytes;
                         var friend = new Friend(friend_name, level, online, pending, isReqOwner, date, image);
                         return friend;
                     }
@@ -55,7 +54,7 @@ namespace BaseServer
         {
             try
             {
-                string queryString = "UPDATE dbo.[Users] SET Icon = @icon WHERE username = @username;";
+                string queryString = "UPDATE dbo.[Users] SET Image = @icon WHERE username = @username;";
                 SqlCommand command = new SqlCommand(queryString, Connection);
                 command.Parameters.AddWithValue("@username", request.Username);
                 command.Parameters.AddWithValue("@icon", request.Image);

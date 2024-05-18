@@ -29,6 +29,7 @@ namespace LauncherApp.CustomControls
             InitializeComponent();
             UsernameLabel.Text = friend.Username;
             LevelNumberLabel.Text = friend.Level.ToString();
+            ProfilePicture.Image = Utils.BitmapFromBytes(friend.Image);
             InitEvents();
         }
 

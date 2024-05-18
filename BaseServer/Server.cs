@@ -10,7 +10,7 @@ namespace BaseServer
     {
         private TcpListener _listener;
         private CancellationTokenSource _cts;
-        private const int BufferSize = 2 * 1024 * 1024; // 2 MB
+        private const int BufferSize = 4 * 1024 * 1024; // 4 MB
         private List<TcpClient> _clients;
 
         public void Start()
@@ -46,29 +46,34 @@ namespace BaseServer
 
         private async Task ProcessRequests(TcpClient client)
         {
-            while (!_cts.Token.IsCancellationRequested)
-            {
-                var buffer = new byte[BufferSize];
-                var stream = client.GetStream();
-                var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                var request = JsonConvert.DeserializeObject<Request>(data);
-                Console.WriteLine(@"Request received: " + request!.Action);
-
-                string responseMessage = ActionList.Actions[request.Action](request)!;
-                var response = Encoding.UTF8.GetBytes(responseMessage);
                 try
                 {
-                    await stream.WriteAsync(response, 0, response.Length);
-                    Console.WriteLine($"Stream Length: {stream.Length}, Response Length: {response.Length}");
-                    await stream.FlushAsync();
-                    Console.WriteLine(@"Response sent: " + responseMessage);
+                    while (!_cts.Token.IsCancellationRequested)
+                    {
+                        var buffer = new byte[BufferSize];
+                        var stream = client.GetStream();
+                        var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+                        var data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                        var request = JsonConvert.DeserializeObject<Request>(data);
+                        Console.WriteLine(@"Request received: " + request!.Action);
+
+                        string responseMessage = ActionList.Actions[request.Action](request)!;
+                        var response = Encoding.UTF8.GetBytes(responseMessage);
+                        await stream.WriteAsync(response, 0, response.Length);
+                        if (request.Action == "Logout")
+                        {
+                            _clients.Remove(client);
+                            client.Close();
+                            break;
+                        }
+
+                        Console.WriteLine(@"Response sent: " + responseMessage);
+                    }
                 }
-                catch (System.IO.IOException ex)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Error writing response: " + ex.Message);
+                    Console.WriteLine(@"Error Processing response: " + ex.Message);
                 }
-            }
         }
 
         public void Stop()

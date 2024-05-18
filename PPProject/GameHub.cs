@@ -20,7 +20,7 @@ namespace LauncherApp
             InitializeComponent();
             UsernameLabel.Text = usr.Username;
             LevelNumberLabel.Text = usr.Level.ToString();
-            roundedPicture1.Image = usr.Image;
+            roundedPicture1.Image = Utils.BitmapFromBytes(usr.Image);
             InitControls();
             SelectedFriendDisplay = AllLabel;
             Connected = true;
@@ -67,12 +67,6 @@ namespace LauncherApp
                     var friendControl = new FriendListItem(friend);
                     FriendListPanel.Controls.Add(friendControl);
                 }
-
-                for (int i = 0; i < 30; i++)
-                {
-                    FriendListPanel.Controls.Add(new FriendListItem(User.Instance.friends[0]));
-                }
-
                 FriendListPanel.ResumeLayout();
             });
         }
@@ -169,19 +163,31 @@ namespace LauncherApp
             FriendListPanel.Controls.SetChildIndex(addFriendControl, 0);
         }
 
+        // ...
+
         private async void roundedPicture1_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "PNG Files (*.png)|*.png";
+                openFileDialog.Filter = "Image Files (*.jpeg;*.jpg;*.png)|*.jpeg;*.jpg;*.png";
                 openFileDialog.RestoreDirectory = true;
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string filePath = openFileDialog.FileName;
-                    if (new FileInfo(filePath).Length <= 2 * 1024 * 1024) // Check if file size is less than 2MB
+                    if (new FileInfo(filePath).Length <= 4 * 1024 * 1024) // Check if file size is less than 2MB
                     {
-                        var image = Utils.BytesFromBitmap((Bitmap)Image.FromFile(filePath),ImageFormat.Png);
+                        ImageFormat imageFormat;
+                        if (Path.GetExtension(filePath).Equals(".png", StringComparison.OrdinalIgnoreCase))
+                        {
+                            imageFormat = ImageFormat.Png;
+                        }
+                        else
+                        {
+                            imageFormat = ImageFormat.Jpeg;
+                        }
+
+                        var image = Utils.BytesFromBitmap((Bitmap)Image.FromFile(filePath), imageFormat);
                         var request = new Request() { Action = "UpdateIcon", Username = User.Instance.Username, Image = image };
                         var message = JsonConvert.SerializeObject(request);
                         _ = Client.Instance.SendMessageAsync(message);

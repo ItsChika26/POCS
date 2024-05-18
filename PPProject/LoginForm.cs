@@ -75,13 +75,17 @@ namespace LauncherApp
             var response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())!);
             if (response!.Success)
             {
-                SaveLoginDetails();
-                User.Instance.LoadUser(username, response.Level,Utils.BitmapFromBytes(response.Image));
+                if (response.Image != null)
+                {
+                    User.Instance.LoadUser(username, response.Level, response.Image);
+                }
+                else
+                {
+                    User.Instance.LoadUser(username, response.Level);
+                }
                 await LoadFriends();
-                this.Hide();
-                var form = new GameHub();
-                form.ShowDialog();
-                this.Show();
+                DialogResult = DialogResult.OK;
+                this.Close();
 
             }
             else
@@ -143,7 +147,7 @@ namespace LauncherApp
         {
             var request = new Request { Username = User.Instance.Username, Action = "LoadFriends" };
             var message = JsonConvert.SerializeObject(request);
-            _ = Client.Instance.SendMessageAsync(message);
+            await Client.Instance.SendMessageAsync(message);
             var response = JsonConvert.DeserializeObject<Request>((await Client.Instance.ReceiveMessageAsync())!);
             User.Instance.UpdateFriends(response!.friends);
         }
@@ -151,6 +155,7 @@ namespace LauncherApp
         private void Exit_button_Click(object sender, EventArgs e)
         {
             Client.Instance.Disconnect();
+            DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
