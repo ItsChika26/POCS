@@ -57,9 +57,17 @@ namespace BaseServer
 
                 string responseMessage = ActionList.Actions[request.Action](request)!;
                 var response = Encoding.UTF8.GetBytes(responseMessage);
-                await stream.WriteAsync(response, 0, response.Length);
-                await stream.FlushAsync();
-                Console.WriteLine(@"Response sent: " + responseMessage);
+                try
+                {
+                    await stream.WriteAsync(response, 0, response.Length);
+                    Console.WriteLine($"Stream Length: {stream.Length}, Response Length: {response.Length}");
+                    await stream.FlushAsync();
+                    Console.WriteLine(@"Response sent: " + responseMessage);
+                }
+                catch (System.IO.IOException ex)
+                {
+                    Console.WriteLine("Error writing response: " + ex.Message);
+                }
             }
         }
 
