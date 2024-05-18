@@ -10,7 +10,7 @@ public class Client : IDisposable
 {
     private static Client? _instance;
     private TcpClient? _tcpClient;
-    private NetworkStream? _stream;
+    private NetworkStream? _stream; 
     public bool IsConnected => TcpClient!.Connected;
     public event OnDataUpdate? OnDataUpdateEvent; 
 
