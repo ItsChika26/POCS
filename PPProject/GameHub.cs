@@ -31,6 +31,14 @@ namespace LauncherApp
             Client.Instance.OnDataUpdateEvent += LoadFriends;
         }
 
+        private void UpdateFriendDisplayColor()
+        {
+            AllLabel.ForeColor = Color.White;
+            PendingLabel.ForeColor = Color.White;
+            OnlineLabel.ForeColor = Color.White;
+            SelectedFriendDisplay.ForeColor = Color.FromArgb(255, 4, 198, 202);
+        }
+
         private void LoadFriends(object sender, EventArgs e)
         {
             if (SelectedFriendDisplay == AllLabel)
@@ -45,13 +53,16 @@ namespace LauncherApp
             {
                 LoadOnlineFriends(sender, e);
             }
+
         }
 
         private void LoadAllFriends(object sender, EventArgs e)
         {
+            SelectedFriendDisplay = AllLabel;
+            UpdateFriendDisplayColor();
+
             this.Invoke((MethodInvoker)delegate
             {
-                SelectedFriendDisplay = AllLabel;
                 List<Control> controls = new();
                 if (AddingFriends)
                     controls.Add(addFriendControl);
@@ -67,14 +78,17 @@ namespace LauncherApp
                 FriendListPanel.Controls.AddRange(controls.ToArray());
                 FriendListPanel.ResumeLayout();
             });
+
         }
 
         private void LoadPendingFriends(object sender, EventArgs e)
         {
+            SelectedFriendDisplay = PendingLabel;
+            UpdateFriendDisplayColor();
+
             this.Invoke((MethodInvoker)delegate
             {
 
-                SelectedFriendDisplay = AllLabel;
                 List<Control> controls = new();
                 if (AddingFriends)
                     controls.Add(addFriendControl);
@@ -90,13 +104,16 @@ namespace LauncherApp
                 FriendListPanel.Controls.AddRange(controls.ToArray());
                 FriendListPanel.ResumeLayout();
             });
+
         }
 
         private void LoadOnlineFriends(object sender, EventArgs e)
         {
+            SelectedFriendDisplay = OnlineLabel;
+            UpdateFriendDisplayColor();
+
             this.Invoke((MethodInvoker)delegate
             {
-                SelectedFriendDisplay = AllLabel;
                 List<Control> controls = new();
                 if (AddingFriends)
                     controls.Add(addFriendControl);
@@ -112,6 +129,7 @@ namespace LauncherApp
                 FriendListPanel.ResumeLayout();
                 
             });
+
         }
 
         private void InitControls()
@@ -152,6 +170,7 @@ namespace LauncherApp
         private void FilterLabel_MouseLeave(object sender, EventArgs e)
         {
             var label = (Label)sender;
+            if(label != SelectedFriendDisplay)
             label.ForeColor = Color.White;
         }
 
@@ -196,7 +215,7 @@ namespace LauncherApp
                     }
                     else
                     {
-                        MessageBox.Show(@"The selected image exceeds the maximum file size limit of 2MB.");
+                        MessageBox.Show(@"The selected image exceeds the maximum file size limit of 4MB.");
                     }
                 }
             }
