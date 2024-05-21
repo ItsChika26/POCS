@@ -96,7 +96,7 @@
             roundedPicture1.Location = new Point(81, 21);
             roundedPicture1.Name = "roundedPicture1";
             roundedPicture1.Size = new Size(135, 135);
-            roundedPicture1.SizeMode = PictureBoxSizeMode.StretchImage;
+            roundedPicture1.SizeMode = PictureBoxSizeMode.Zoom;
             roundedPicture1.TabIndex = 1;
             roundedPicture1.TabStop = false;
             roundedPicture1.Click += roundedPicture1_Click;

@@ -10,7 +10,7 @@ namespace BaseServer
     internal static class Database
     {
         private static string ConnectionString =
-            "Data Source=DAYOLAPTOP\\POCS;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            "Data Source=DAYOLAPTOP\\POCS;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False;MultipleActiveResultSets=True";
         private static SqlConnection Connection = new(ConnectionString);
 
         public static async Task OpenConnection()
