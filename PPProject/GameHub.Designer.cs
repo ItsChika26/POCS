@@ -50,7 +50,9 @@
             AddFriendButton = new Button();
             panel3 = new Panel();
             PendingLabel = new Label();
+            label6 = new Label();
             AllLabel = new Label();
+            label7 = new Label();
             OnlineLabel = new Label();
             panel2 = new Panel();
             panel1 = new Panel();
@@ -316,7 +318,9 @@
             // panel3
             // 
             panel3.Controls.Add(PendingLabel);
+            panel3.Controls.Add(label6);
             panel3.Controls.Add(AllLabel);
+            panel3.Controls.Add(label7);
             panel3.Controls.Add(OnlineLabel);
             panel3.Location = new Point(11, 156);
             panel3.Name = "panel3";
@@ -331,7 +335,7 @@
             PendingLabel.Dock = DockStyle.Left;
             PendingLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             PendingLabel.ForeColor = SystemColors.ButtonHighlight;
-            PendingLabel.Location = new Point(179, 5);
+            PendingLabel.Location = new Point(173, 5);
             PendingLabel.Name = "PendingLabel";
             PendingLabel.Size = new Size(87, 28);
             PendingLabel.TabIndex = 2;
@@ -339,6 +343,19 @@
             PendingLabel.Click += LoadPendingFriends;
             PendingLabel.MouseEnter += FilterLabel_MouseEnter;
             PendingLabel.MouseLeave += FilterLabel_MouseLeave;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.BackColor = Color.FromArgb(60, 44, 98);
+            label6.Dock = DockStyle.Left;
+            label6.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.ForeColor = SystemColors.ButtonHighlight;
+            label6.Location = new Point(153, 5);
+            label6.Name = "label6";
+            label6.Size = new Size(20, 28);
+            label6.TabIndex = 1;
+            label6.Text = "/";
             // 
             // AllLabel
             // 
@@ -349,12 +366,25 @@
             AllLabel.ForeColor = SystemColors.ButtonHighlight;
             AllLabel.Location = new Point(118, 5);
             AllLabel.Name = "AllLabel";
-            AllLabel.Size = new Size(61, 28);
+            AllLabel.Size = new Size(35, 28);
             AllLabel.TabIndex = 1;
-            AllLabel.Text = "All   /";
+            AllLabel.Text = "All";
             AllLabel.Click += LoadAllFriends;
             AllLabel.MouseEnter += FilterLabel_MouseEnter;
             AllLabel.MouseLeave += FilterLabel_MouseLeave;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.BackColor = Color.FromArgb(60, 44, 98);
+            label7.Dock = DockStyle.Left;
+            label7.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.ForeColor = SystemColors.ButtonHighlight;
+            label7.Location = new Point(98, 5);
+            label7.Name = "label7";
+            label7.Size = new Size(20, 28);
+            label7.TabIndex = 3;
+            label7.Text = "/";
             // 
             // OnlineLabel
             // 
@@ -365,9 +395,9 @@
             OnlineLabel.ForeColor = SystemColors.ButtonHighlight;
             OnlineLabel.Location = new Point(20, 5);
             OnlineLabel.Name = "OnlineLabel";
-            OnlineLabel.Size = new Size(98, 28);
+            OnlineLabel.Size = new Size(78, 28);
             OnlineLabel.TabIndex = 0;
-            OnlineLabel.Text = "Online   /";
+            OnlineLabel.Text = "Online ";
             OnlineLabel.Click += LoadOnlineFriends;
             OnlineLabel.MouseEnter += FilterLabel_MouseEnter;
             OnlineLabel.MouseLeave += FilterLabel_MouseLeave;
@@ -584,5 +614,7 @@
         private Panel FriendListContainerPanel;
         public FlowLayoutPanel GameListPanel;
         private CustomControls.CustomFLP FriendListPanel;
+        private Label label6;
+        private Label label7;
     }
 }

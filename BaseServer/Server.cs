@@ -92,7 +92,7 @@ namespace BaseServer
                 if (Username != "")
                 {
                     _clients.Remove(Username);
-                    Database.Logout(new Request() { Username = Username });
+                    await Database.Logout(new Request() { Username = Username });
                 }
 
                 client.Close();
